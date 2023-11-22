@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
-import 'package:i_konewka_app/screens/elements/WhiteButton.dart';
+import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 
 import '../main.dart';
 
@@ -19,9 +19,9 @@ class StartScreen extends StatelessWidget {
     return Center(
         child: Wrap(
           alignment: WrapAlignment.center,
-          runSpacing: 30,
+          runSpacing: size.width*0.10,
           children:[
-            CustomButton(fontSize: 30,height: 50,width: size.width/1.5,onPressed: (){navigatorKey.currentState?.pushNamed(LoginScreen.routeName);} ,textButton: 'Login',),
+            CustomButton(fontSize: 30,height: 50,width: size.width/1.5,onPressed: (){navigatorKey.currentState?.pushNamed(LoginScreen.routeName);} ,textButton: 'Login'),
             CustomButton(fontSize: 30,height: 50,width: size.width/1.5,onPressed: (){} ,textButton: 'Register',),
           ],
         )

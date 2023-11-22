@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
 import 'package:i_konewka_app/screens/StartScreen.dart';
-import 'package:i_konewka_app/screens/elements/AppTheme.dart';
+import 'package:i_konewka_app/AppTheme.dart';
 import 'package:i_konewka_app/screens/elements/Bar.dart';
 
 class App extends StatelessWidget {
