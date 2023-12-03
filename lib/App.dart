@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/main.dart';
+import 'package:i_konewka_app/screens/AddPlantScreen.dart';
+import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
+import 'package:i_konewka_app/screens/RegisterScreen.dart';
 import 'package:i_konewka_app/screens/StartScreen.dart';
 import 'package:i_konewka_app/AppTheme.dart';
 import 'package:i_konewka_app/screens/elements/Bar.dart';
@@ -16,7 +19,7 @@ class App extends StatelessWidget {
       title: title,
       theme: AppTheme.theme,
       home: Scaffold(
-        appBar: Bar(title: title,),
+        appBar: const Bar(),
         body: StartScreen(title: title,),
       ),
       navigatorKey: navigatorKey,
@@ -25,6 +28,12 @@ class App extends StatelessWidget {
              StartScreen(title: title),
         LoginScreen.routeName: (context) =>
             const LoginScreen(),
+        HomeScreen.routeName: (context) =>
+            const HomeScreen(),
+        RegisterScreen.routeName: (context) =>
+            const RegisterScreen(),
+        AddPlantScreen.routeName: (context) =>
+            const AddPlantScreen(),
       }
     );
   }

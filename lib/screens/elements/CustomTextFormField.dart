@@ -8,7 +8,7 @@ class CustomTextFormField extends StatefulWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
 
-  CustomTextFormField({
+  const CustomTextFormField({super.key,
     required this.label,
     required this.hintText,
     this.keyboardType = TextInputType.text,
@@ -42,12 +42,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           labelStyle: const TextStyle(color: Colors.white),
           hintText: widget.hintText,
           hintStyle: const TextStyle(color: Colors.white54),
-          border: const OutlineInputBorder(),
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.green,width: 3.0)
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.green,width: 3.0)
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            borderSide: const BorderSide(color: Colors.green,width: 3.0)
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            borderSide: const BorderSide(color: Colors.green,width: 3.0)
           )
         ),
         style: const TextStyle(color: Colors.white),

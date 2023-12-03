@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class Bar extends StatelessWidget implements PreferredSizeWidget{
-  const Bar({super.key, required this.title});
+  const Bar({super.key});
 
-  final String title;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      title: const Text('I-Konewka'),
       centerTitle: true,
     );
   }
