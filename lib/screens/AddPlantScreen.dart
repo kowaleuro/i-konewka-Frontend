@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:i_konewka_app/screens/elements/CameraComponent.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
 import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
@@ -53,6 +54,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                           _name = val;
                         }),
                     CustomToggleButtons(),
+                    CameraComponent(),
                     CustomButton(
                         onPressed: () {
                           if (_formAddPlantKey.currentState!.validate()) {Navigator.of(context).pop();}
