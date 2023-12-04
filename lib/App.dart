@@ -7,7 +7,6 @@ import 'package:i_konewka_app/screens/RegisterScreen.dart';
 import 'package:i_konewka_app/screens/StartScreen.dart';
 import 'package:i_konewka_app/AppTheme.dart';
 import 'package:i_konewka_app/screens/elements/Bar.dart';
-import 'package:i_konewka_app/screens/elements/CameraComponent.dart';
 
 class App extends StatelessWidget {
   App({Key? key}) : super(key: key);

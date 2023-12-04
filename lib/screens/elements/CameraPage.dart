@@ -19,7 +19,27 @@ class _CameraPageState extends State<CameraPage> {
             child: _cameraController.value.isInitialized
                 ? CameraPreview(_cameraController)
                 : const Center(child:
-            CircularProgressIndicator())));
+            CircularProgressIndicator())),
+        floatingActionButton: FloatingActionButton(
+          // Provide an onPressed callback.
+          onPressed: () async {
+            // Take the Picture in a try / catch block. If anything goes wrong,
+            // catch the error.
+            try {
+              // Ensure that the camera is initialized.
+              // Attempt to take a picture and then get the location
+              // where the image file is saved.
+              final image = await _cameraController.takePicture();
+              Navigator.of(context).pop(image);
+            } catch (e) {
+              // If an error occurs, log the error to the console.
+              print(e);
+            }
+          },
+          child: const Icon(Icons.camera_alt),
+        )
+    );
+
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
