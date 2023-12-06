@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:i_konewka_app/screens/EditPlantScreen.dart';
+import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
+import 'package:i_konewka_app/screens/elements/CustomLoadingPopUp.dart';
 import 'package:i_konewka_app/screens/elements/PlantImage.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+import '../../main.dart';
 
 class PlantContainer extends StatefulWidget {
 
@@ -37,30 +43,69 @@ class _PlantContainerState extends State<PlantContainer>{
 
     Size size = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: widget.width,
-          height: widget.height,
-          color: widget.colorGreen,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: PlantImage(image: Image.asset('assets/images/plant.jpg'), radius: 50,),
-              ),
-              Flexible(child: Text(widget.name,style: TextStyle(fontSize: widget.fontSize),)),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Icon(widget.icon),
-              ),
-            ],
+    return InkWell(
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            color: widget.colorGreen,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: PlantImage(image: Image.asset('assets/images/plant.jpg'), radius: 50,),
+                ),
+                Flexible(child: Text(widget.name,style: TextStyle(fontSize: widget.fontSize),)),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Icon(widget.icon),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+      onTap: (){
+        Alert(
+            type:AlertType.warning,
+            style:CustomAlertStyle.alertStyle,
+            context: context,
+            title: "Do you want to start watering?",
+            desc: "Watch out! If you will press START, water will begin to flow.",
+            buttons: [
+              DialogButton(
+                onPressed: () => Navigator.pop(context),
+                color: Colors.green,
+                child: const Text(
+                  "CANCEL",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white, fontSize: 20),
+                ),
+              ),
+              DialogButton(
+                onPressed: (){
+                  Navigator.pop(context);
+                  var popUp = CustomLoadingPopUp(context: context);
+                  popUp.show();
+                  // TODO: implement blueetooh-watering and uncomment dismiss
+                  // popUp.dismiss();
+                },
+                color: Colors.green,
+                child: const Text(
+                  "START",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white, fontSize: 20),
+                ),
+              )
+            ],
+        ).show();},
+      onLongPress: (){navigatorKey.currentState?.pushNamed(EditPlantScreen.routeName);},
     );
   }
 }

@@ -10,21 +10,21 @@ import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
 import '../main.dart';
 import 'elements/Bar.dart';
 
-class AddPlantScreen extends StatefulWidget {
+class EditPlantScreen extends StatefulWidget {
 
-  const AddPlantScreen({super.key});
+  const EditPlantScreen({super.key});
 
-  static const routeName = '/AddPlantScreen';
+  static const routeName = '/EditPlantScreen';
 
   @override
   State<StatefulWidget> createState() {
-    return _AddPlantScreen();
+    return _EditPlantScreen();
   }
 }
 
-class _AddPlantScreen extends State<AddPlantScreen>{
+class _EditPlantScreen extends State<EditPlantScreen>{
 
-  final _formAddPlantKey = GlobalKey<FormState>();
+  final _formEditPlantKey = GlobalKey<FormState>();
   late String _name = '';
   late String _health = '';
   late XFile? _imgFile;
@@ -42,7 +42,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
             padding: EdgeInsets.only(top: size.height/15),
             child: Center(
               child: Form(
-                key: _formAddPlantKey,
+                key: _formEditPlantKey,
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -81,7 +81,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                         },
                         onChanged: (val){
                           _name = val;
-                    }),
+                        }),
                     CustomTextFormField(
                         label: 'Health',
                         hintText: 'Provide health of a plant',
@@ -94,7 +94,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                         },
                         onChanged: (val){
                           _health = val;
-                    }),
+                        }),
                     CustomTextFormField(
                         label: 'Watering',
                         hintText: 'Amount of water for watering',
@@ -108,7 +108,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                         },
                         onChanged: (val){
                           _health = val;
-                    }),
+                        }),
                     CustomToggleButtons(isSelected: _wateringDaysList,onPressed: (int index)
                     {
                       setState(() {
@@ -117,7 +117,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                     }),
                     CustomButton(
                         onPressed: () {
-                          if (_formAddPlantKey.currentState!.validate()) {Navigator.of(context).pop();}
+                          if (_formEditPlantKey.currentState!.validate()) {Navigator.of(context).pop();}
                         },
                         height: 50,
                         width: size.width/2,

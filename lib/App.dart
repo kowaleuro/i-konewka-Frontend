@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/AddPlantScreen.dart';
+import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
 import 'package:i_konewka_app/screens/RegisterScreen.dart';
@@ -34,6 +35,8 @@ class App extends StatelessWidget {
             const RegisterScreen(),
         AddPlantScreen.routeName: (context) =>
             const AddPlantScreen(),
+        EditPlantScreen.routeName: (context) =>
+          const EditPlantScreen(),
       }
     );
   }

@@ -58,7 +58,7 @@ class _RegisterScreen extends State<RegisterScreen>{
                     CustomTextFormField(
                         label: 'Email',
                         hintText: 'Provide email address',
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.emailAddress,
                         validator: (val){
                           if (val!.isEmpty){
                             return 'Email is empty!';
@@ -71,7 +71,7 @@ class _RegisterScreen extends State<RegisterScreen>{
                     CustomTextFormField(
                         label: 'Password',
                         hintText: 'Provide password',
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.visiblePassword,
                         validator: (val){
                           if (val!.isEmpty){
                             return 'Password is empty!';
