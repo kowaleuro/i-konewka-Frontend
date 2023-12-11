@@ -39,6 +39,9 @@ dependencies:
   camera: ^0.10.5+5
   rflutter_alert: ^2.0.7
   loading_animation_widget: ^1.2.0+4
+  flutter_session_jwt: ^0.0.5
+  json_serializable: ^6.7.1
+  json_annotation: ^4.8.0
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +53,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.3.3
+  json_serializable: ^6.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

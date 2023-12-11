@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/screens/HomeScreen.dart';
+import 'package:i_konewka_app/screens/LoginScreen.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
 
+import '../core/RequestHandler.dart';
 import '../main.dart';
 import 'elements/Bar.dart';
 
@@ -106,7 +108,9 @@ class _RegisterScreen extends State<RegisterScreen>{
                         }),
                     CustomButton(
                         onPressed: () {
-                          if (_formRegisterKey.currentState!.validate()) {navigatorKey.currentState?.pushNamed(HomeScreen.routeName);}
+                          if (_formRegisterKey.currentState!.validate()) {
+                            _register();
+                          }
                         },
                         height: 50,
                         width: size.width/2,
@@ -120,5 +124,13 @@ class _RegisterScreen extends State<RegisterScreen>{
           ),
         )
     );
+  }
+
+  void _register() async{
+    RequestHandler requestHandler = RequestHandler();
+    bool result = (await requestHandler.register(_email,_password,_nick,_wateringHour));
+    if (result == true){
+      navigatorKey.currentState?.pushNamed(LoginScreen.routeName);
+    }
   }
 }

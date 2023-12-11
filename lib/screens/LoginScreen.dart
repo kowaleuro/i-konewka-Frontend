@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:i_konewka_app/core/RequestHandler.dart';
 import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
@@ -67,7 +68,9 @@ class _LoginScreen extends State<LoginScreen>{
                       }),
                   CustomButton(
                     onPressed: () {
-                      if (_formLoginKey.currentState!.validate()) {navigatorKey.currentState?.pushNamed(HomeScreen.routeName);}
+                      if (_formLoginKey.currentState!.validate()){
+                        _login();
+                      }
                     },
                     height: 50,
                     width: size.width/2,
@@ -81,6 +84,14 @@ class _LoginScreen extends State<LoginScreen>{
         ),
       )
     );
+  }
+
+  void _login() async{
+    RequestHandler requestHandler = RequestHandler();
+    bool result = (await requestHandler.login(_email,_password));
+    if (result == true){
+      navigatorKey.currentState?.pushNamed(HomeScreen.routeName);
+    }
   }
 }
 
