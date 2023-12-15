@@ -16,6 +16,36 @@ class ApiHelper {
     return _handleResponse(response);
   }
 
+  Future<Map<String, dynamic>> postAuth(String endpoint, Map<String, dynamic> data) async {
+    var token = await FlutterSessionJwt.getPayload();
+    final response = await http.post(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<Map<String, dynamic>> postAuthParams(String endpoint, Map<String, dynamic> data, Map<String, dynamic> parameters) async {
+    var token = await FlutterSessionJwt.getPayload();
+    final response = await http.post(
+      Uri.parse('$baseUrl/$endpoint').replace(queryParameters:
+      parameters.map((key, value)
+      => MapEntry(key, value.toString())
+      )
+      ),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+    return _handleResponse(response);
+  }
+
   Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> data) async {
     var token = await FlutterSessionJwt.getPayload();
     final response = await http.put(

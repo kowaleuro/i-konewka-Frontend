@@ -21,23 +21,23 @@ class PlantContainer extends StatefulWidget {
   final double height;
   final double width;
   final double fontSize;
-  final String name;
+  final String? name;
   // final Image image;
   final IconData icon;
   final colorWhite = Colors.white;
   final colorGreen = Colors.green;
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-
-  @override
   State<StatefulWidget> createState() => _PlantContainerState();
 }
 
 class _PlantContainerState extends State<PlantContainer>{
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -59,7 +59,7 @@ class _PlantContainerState extends State<PlantContainer>{
                   padding: const EdgeInsets.all(20.0),
                   child: PlantImage(image: Image.asset('assets/images/plant.jpg'), radius: 50,),
                 ),
-                Flexible(child: Text(widget.name,style: TextStyle(fontSize: widget.fontSize),)),
+                Flexible(child: Text(widget.name!,style: TextStyle(fontSize: widget.fontSize),)),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Icon(widget.icon),
