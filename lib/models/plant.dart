@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'plant.g.dart';
@@ -11,20 +14,20 @@ class Plant{
   late String health;
   late String image;
   late int ml_per_watering;
-  late bool monday;
-  late bool tuesday;
-  late bool wednesday;
-  late bool thursday;
-  late bool friday;
-  late bool saturday;
-  late bool sunday;
+  late int monday;
+  late int tuesday;
+  late int wednesday;
+  late int thursday;
+  late int friday;
+  late int saturday;
+  late int sunday;
 
   factory Plant.fromJson(Map<String, dynamic> json) => _$PlantFromJson(json);
 
   Map<String, dynamic> toJson() => _$PlantToJson(this);
 
-  List<bool> getWateringList(){
-    var waterList = List<bool>.empty();
+  List<int> getWateringList(){
+    var waterList = List<int>.empty();
 
     waterList.add(monday);
     waterList.add(tuesday);
@@ -37,7 +40,7 @@ class Plant{
     return waterList;
   }
 
-  void setWateringDays(List<bool> waterList){
+  void setWateringDays(List<int> waterList){
     monday = waterList[0];
     tuesday = waterList[1];
     wednesday = waterList[2];
@@ -45,6 +48,10 @@ class Plant{
     friday = waterList[4];
     saturday = waterList[5];
     sunday = waterList[6];
+  }
+
+  Uint8List getImageWidget(){
+    return const Base64Decoder().convert(image);
   }
 
 }

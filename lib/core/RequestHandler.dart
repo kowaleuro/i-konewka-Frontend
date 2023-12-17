@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter_session_jwt/flutter_session_jwt.dart';
+import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/models/plant.dart';
 
 import 'ApiHelper.dart';
@@ -14,8 +15,12 @@ class RequestHandler {
     try {
       var postData = {'email': email, 'password': password};
       var responsePost = await api.post('/auth/login', postData);
-      var token = responsePost['message'];
-      await FlutterSessionJwt.saveToken(token);
+      print('Respons' + responsePost.toString());
+      String token = responsePost['message'];
+      token = token.replaceAllMapped(RegExp(r'^\s+|\s+$'), (match) => "");
+      token = token.replaceAll("\"", "");
+      print("Token:" + token);
+      await storage.write(key: 'jwt', value: token);
       return true;
     }catch (e) {
       return false;
@@ -48,23 +53,23 @@ class RequestHandler {
     }
   }
 
-  Future<bool> addPlant(String name, String image, int fid) async {
+  Future<int> addPlant(String name, String? encodedImage) async {
     try {
-      var postData = {'name': name, 'image': image};
-      var response = await api.postAuth('/api/flower/',postData);
-      print('Register Response: $response');
-      return true;
+      var postData = {'flower_name': name, 'flower_image': encodedImage};
+      var response = await api.postAuth('/api/flower',postData);
+      var fid = response['fid'];
+      return int.parse(fid);
     }catch (e) {
       print(e);
-      return false;
+      return 0;
     }
   }
 
-  Future<bool> editPlant(String name, String image, int fid) async {
+  Future<bool> editPlant(String name, String? encodedImage, int fid) async {
     try {
-      var postData = {'name': name, 'image': image};
+      var postData = {'flower_name': name, 'flower_image': encodedImage};
       var parameters = {'fid': fid};
-      var response = await api.postAuthParams('/api/flower/',postData,parameters);
+      var response = await api.postAuthParams('/api/flower',postData,parameters);
       print('Register Response: $response');
       return true;
     }catch (e) {

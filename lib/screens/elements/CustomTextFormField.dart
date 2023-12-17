@@ -9,6 +9,7 @@ class CustomTextFormField extends StatefulWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
+  final initialValue;
 
     CustomTextFormField({super.key,
     required this.label,
@@ -18,6 +19,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.validator,
     this.inputFormatters,
+    this.initialValue = ''
   });
 
   @override
@@ -41,6 +43,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         keyboardType: widget.keyboardType,
         inputFormatters: widget.inputFormatters,
         obscureText: widget.obscureText,
+        initialValue: widget.initialValue,
         decoration: InputDecoration(
           labelText: widget.label,
           labelStyle: const TextStyle(color: Colors.white),

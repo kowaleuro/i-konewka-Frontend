@@ -1,12 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/elements/CameraPage.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
 import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
 
+import '../core/RequestHandler.dart';
 import '../main.dart';
 import 'elements/Bar.dart';
 
@@ -26,10 +31,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
 
   final _formAddPlantKey = GlobalKey<FormState>();
   late String _name = '';
-  late String _health = '';
   late XFile? _imgFile;
-  late int _waterMl;
-  late List<bool> _wateringDaysList = List.generate(7, (_)=>false );
   @override
   Widget build(BuildContext context) {
 
@@ -82,42 +84,19 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                         onChanged: (val){
                           _name = val;
                     }),
-                    CustomTextFormField(
-                        label: 'Health',
-                        hintText: 'Provide health of a plant',
-                        keyboardType: TextInputType.text,
-                        validator: (val){
-                          if (val!.isEmpty){
-                            return 'Health is empty!';
-                          }
-                          return null;
-                        },
-                        onChanged: (val){
-                          _health = val;
-                    }),
-                    CustomTextFormField(
-                        label: 'Watering',
-                        hintText: 'Amount of water for watering',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        validator: (val){
-                          if (val!.isEmpty){
-                            return 'Watering is empty!';
-                          }
-                          return null;
-                        },
-                        onChanged: (val){
-                          _health = val;
-                    }),
-                    CustomToggleButtons(isSelected: _wateringDaysList,onPressed: (int index)
-                    {
-                      setState(() {
-                        _wateringDaysList[index] = !_wateringDaysList[index];
-                      });
-                    }),
                     CustomButton(
                         onPressed: () {
-                          if (_formAddPlantKey.currentState!.validate()) {Navigator.of(context).pop();}
+                          if (_formAddPlantKey.currentState!.validate()) {
+                            RequestHandler requestHandler = RequestHandler();
+                            var bytes = File(_imgFile!.path).readAsBytesSync();
+                            String? b64image = base64Encode(bytes);
+                            var fid = requestHandler.addPlant(_name,b64image);
+                            Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditPlantScreen(plantId: fid, startName: _name,),
+                            ),
+                          );}
                         },
                         height: 50,
                         width: size.width/2,

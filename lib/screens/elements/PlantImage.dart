@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,17 +12,16 @@ class PlantImage extends StatelessWidget {
       });
 
   final double radius;
-  final Image image;
+  final Uint8List image;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: radius,
       width: radius,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
       image: DecorationImage(
-        image: AssetImage(
-          'assets/images/plant.jpg'),
+        image: MemoryImage(image),
         fit: BoxFit.fill,),
         shape: BoxShape.circle,
       )

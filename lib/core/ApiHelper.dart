@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_session_jwt/flutter_session_jwt.dart';
 import 'package:http/http.dart' as http;
+import 'package:i_konewka_app/main.dart';
 
 class ApiHelper {
   final String baseUrl;
@@ -17,7 +18,7 @@ class ApiHelper {
   }
 
   Future<Map<String, dynamic>> postAuth(String endpoint, Map<String, dynamic> data) async {
-    var token = await FlutterSessionJwt.getPayload();
+    String? token = await storage.read(key: 'jwt');
     final response = await http.post(
       Uri.parse('$baseUrl/$endpoint'),
       headers: {
@@ -30,7 +31,9 @@ class ApiHelper {
   }
 
   Future<Map<String, dynamic>> postAuthParams(String endpoint, Map<String, dynamic> data, Map<String, dynamic> parameters) async {
-    var token = await FlutterSessionJwt.getPayload();
+    String? token = await storage.read(key: 'jwt');
+    print("jd");
+    print("Token" + token!);
     final response = await http.post(
       Uri.parse('$baseUrl/$endpoint').replace(queryParameters:
       parameters.map((key, value)
@@ -47,7 +50,7 @@ class ApiHelper {
   }
 
   Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> data) async {
-    var token = await FlutterSessionJwt.getPayload();
+    String? token = await storage.read(key: 'jwt');
     final response = await http.put(
       Uri.parse('$baseUrl/$endpoint'),
       headers: {
@@ -60,7 +63,8 @@ class ApiHelper {
   }
 
   Future<Map<String, dynamic>> get(String endpoint) async {
-    var token = await FlutterSessionJwt.getPayload();
+    String? token = await storage.read(key: 'jwt');
+    print('Bearer $token');
     final response = await http.get(
       Uri.parse('$baseUrl/$endpoint'),
       headers: {
@@ -73,7 +77,7 @@ class ApiHelper {
 
   Map<String, dynamic> _handleResponse(http.Response response) {
     try {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final Map<String, dynamic> data = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return data;

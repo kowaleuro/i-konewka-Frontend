@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
@@ -16,13 +18,14 @@ class PlantContainer extends StatefulWidget {
     required this.fontSize,
     required this.name,
     required this.icon,
+    required this.image,
   });
 
   final double height;
   final double width;
   final double fontSize;
   final String? name;
-  // final Image image;
+  final Uint8List image;
   final IconData icon;
   final colorWhite = Colors.white;
   final colorGreen = Colors.green;
@@ -57,7 +60,7 @@ class _PlantContainerState extends State<PlantContainer>{
               children: [
                 Padding(
                   padding: const EdgeInsets.all(20.0),
-                  child: PlantImage(image: Image.asset('assets/images/plant.jpg'), radius: 50,),
+                  child: PlantImage(image: widget.image, radius: 50,),
                 ),
                 Flexible(child: Text(widget.name!,style: TextStyle(fontSize: widget.fontSize),)),
                 Padding(

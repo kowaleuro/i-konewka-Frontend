@@ -13,13 +13,13 @@ Plant _$PlantFromJson(Map<String, dynamic> json) => Plant(
       json['image'] as String,
       json['ml_per_watering'] as int,
     )
-      ..monday = json['monday'] as bool
-      ..tuesday = json['tuesday'] as bool
-      ..wednesday = json['wednesday'] as bool
-      ..thursday = json['thursday'] as bool
-      ..friday = json['friday'] as bool
-      ..saturday = json['saturday'] as bool
-      ..sunday = json['sunday'] as bool;
+      ..monday = json['monday'] as int
+      ..tuesday = json['tuesday'] as int
+      ..wednesday = json['wednesday'] as int
+      ..thursday = json['thursday'] as int
+      ..friday = json['friday'] as int
+      ..saturday = json['saturday'] as int
+      ..sunday = json['sunday'] as int;
 
 Map<String, dynamic> _$PlantToJson(Plant instance) => <String, dynamic>{
       'fid': instance.fid,

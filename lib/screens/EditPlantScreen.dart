@@ -2,19 +2,24 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/elements/CameraPage.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
 import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
 
+import '../core/RequestHandler.dart';
 import '../main.dart';
 import 'elements/Bar.dart';
 
 class EditPlantScreen extends StatefulWidget {
 
-  const EditPlantScreen({super.key});
+  const EditPlantScreen({super.key,required this.startName,required this.plantId});
 
   static const routeName = '/EditPlantScreen';
+
+  final startName;
+  final plantId;
 
   @override
   State<StatefulWidget> createState() {
@@ -23,6 +28,19 @@ class EditPlantScreen extends StatefulWidget {
 }
 
 class _EditPlantScreen extends State<EditPlantScreen>{
+
+  @override
+  void initState() {
+    super.initState();
+    final widgetsBinding = WidgetsBinding.instance;
+    widgetsBinding?.addPostFrameCallback((callback) {
+      RequestHandler requestHandler = RequestHandler();
+      // var plantsData = requestHandler.getPlants();
+      setState(() {
+        // plants = plantsData;
+      });
+    });
+  }
 
   final _formEditPlantKey = GlobalKey<FormState>();
   late String _name = '';
@@ -70,6 +88,7 @@ class _EditPlantScreen extends State<EditPlantScreen>{
                       ),
                     ),
                     CustomTextFormField(
+                        initialValue: widget.startName,
                         label: 'Name',
                         hintText: 'Provide name of a plant',
                         keyboardType: TextInputType.text,
@@ -117,12 +136,12 @@ class _EditPlantScreen extends State<EditPlantScreen>{
                     }),
                     CustomButton(
                         onPressed: () {
-                          if (_formEditPlantKey.currentState!.validate()) {Navigator.of(context).pop();}
+                          if (_formEditPlantKey.currentState!.validate()) {Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);}
                         },
                         height: 50,
                         width: size.width/2,
                         fontSize: 30,
-                        textButton: 'Create'
+                        textButton: 'Confirm'
                     ),
                   ],
                 ),

@@ -36,7 +36,7 @@ class App extends StatelessWidget {
         AddPlantScreen.routeName: (context) =>
             const AddPlantScreen(),
         EditPlantScreen.routeName: (context) =>
-          const EditPlantScreen(),
+            const EditPlantScreen(startName: null,plantId: null,),
       }
     );
   }

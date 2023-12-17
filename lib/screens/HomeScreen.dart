@@ -24,17 +24,12 @@ class _HomeState extends State<HomeScreen> {
   void initState() {
     super.initState();
     final widgetsBinding = WidgetsBinding.instance;
-    widgetsBinding?.addPostFrameCallback((callback) {
-      if (ModalRoute
-          .of(context)
-          ?.settings
-          .arguments != null){
-        RequestHandler requestHandler = RequestHandler();
-        var plantsData = requestHandler.getPlants();
-        setState(() {
-          plants = plantsData;
-        });
-      }
+      widgetsBinding?.addPostFrameCallback((callback) {
+      RequestHandler requestHandler = RequestHandler();
+      var plantsData = requestHandler.getPlants();
+      setState(() {
+        plants = plantsData;
+      });
     });
   }
 
@@ -57,7 +52,7 @@ class _HomeState extends State<HomeScreen> {
                     shrinkWrap: true,
                     reverse: false,
                     itemBuilder: (context, index) =>
-                        PlantContainer(height: 100, width: 100, fontSize: 28, name:  snapshot.data?[index].name, icon: Icons.sentiment_very_satisfied),
+                        PlantContainer(height: 100, width: 100, fontSize: 28, name:  snapshot.data?[index].name, icon: Icons.sentiment_very_satisfied,image: snapshot.data![index].getImageWidget(),),
                     itemCount: snapshot.data!.length,
                     separatorBuilder: (BuildContext context, int index) =>  const SizedBox(height:0)
                 );
