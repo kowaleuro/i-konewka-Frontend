@@ -75,6 +75,18 @@ class ApiHelper {
     return _handleResponse(response);
   }
 
+  Future<Map<String, dynamic>> getParams(String endpoint,Map<String, dynamic> parameters) async {
+    String? token = await storage.read(key: 'jwt');
+    final response = await http.get(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    return _handleResponse(response);
+  }
+
   Map<String, dynamic> _handleResponse(http.Response response) {
     try {
       final Map<String, dynamic> data = jsonDecode(response.body);

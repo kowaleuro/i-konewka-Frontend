@@ -10,6 +10,7 @@ import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
 
 import '../core/RequestHandler.dart';
 import '../main.dart';
+import '../models/plant.dart';
 import 'elements/Bar.dart';
 
 class EditPlantScreen extends StatefulWidget {
@@ -29,25 +30,28 @@ class EditPlantScreen extends StatefulWidget {
 
 class _EditPlantScreen extends State<EditPlantScreen>{
 
-  @override
-  void initState() {
-    super.initState();
-    final widgetsBinding = WidgetsBinding.instance;
-    widgetsBinding?.addPostFrameCallback((callback) {
-      RequestHandler requestHandler = RequestHandler();
-      // var plantsData = requestHandler.getPlants();
-      setState(() {
-        // plants = plantsData;
-      });
-    });
-  }
-
+  late final Future<Plant?> plantFuture;
+  late final Plant plant;
   final _formEditPlantKey = GlobalKey<FormState>();
   late String _name = '';
   late String _health = '';
   late XFile? _imgFile;
-  late int _waterMl;
-  late List<bool> _wateringDaysList = List.generate(7, (_)=>false );
+  late int _waterMl = 0;
+  late List<bool> _wateringDaysList = List<bool>.generate(7, (index) => false);
+
+  @override
+  void initState() {
+    super.initState();
+    final widgetsBinding = WidgetsBinding.instance;
+    widgetsBinding?.addPostFrameCallback((callback) async {
+      RequestHandler requestHandler = RequestHandler();
+      print('hej' + widget.plantId.toString());
+      var plantData = requestHandler.getPlant(widget.plantId);
+      setState(() {
+        plantFuture = plantData;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -55,99 +59,122 @@ class _EditPlantScreen extends State<EditPlantScreen>{
 
     return Scaffold(
         appBar: const Bar(),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(top: size.height/15),
-            child: Center(
-              child: Form(
-                key: _formEditPlantKey,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left:size.width*0.10,
-                          right:size.width*0.10,
-                          bottom: size.width*0.10
-                      ),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(size.width/2,90),
-                          backgroundColor: Colors.white,
-                        ),
-                        onPressed: () async {
-                          await availableCameras().then((value) => _navigateAndGetData(context,value));
-                        },
-                        child: Text("Take a Picture",
-                          style:GoogleFonts.nunitoSans(
-                              textStyle: const TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 22
-                              )
+        body: FutureBuilder(
+          future: plantFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(top: size.height / 15),
+                  child: Center(
+                    child: Form(
+                      key: _formEditPlantKey,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: size.width * 0.10,
+                                right: size.width * 0.10,
+                                bottom: size.width * 0.10
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                fixedSize: Size(size.width / 2, 90),
+                                backgroundColor: Colors.white,
+                              ),
+                              onPressed: () async {
+                                await availableCameras().then((value) =>
+                                    _navigateAndGetData(context, value));
+                              },
+                              child: Text("Take a Picture",
+                                style: GoogleFonts.nunitoSans(
+                                    textStyle: const TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 22
+                                    )
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          CustomTextFormField(
+                              initialValue: snapshot.data?.name,
+                              label: 'Name',
+                              hintText: 'Provide name of a plant',
+                              keyboardType: TextInputType.text,
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return 'Name is empty!';
+                                }
+                                return null;
+                              },
+                              onChanged: (val) {
+                                _name = val;
+                              }),
+                          CustomTextFormField(
+                              initialValue: snapshot.data?.health,
+                              label: 'Health',
+                              hintText: 'Provide health of a plant',
+                              keyboardType: TextInputType.text,
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return 'Health is empty!';
+                                }
+                                return null;
+                              },
+                              onChanged: (val) {
+                                _health = val;
+                              }),
+                          CustomTextFormField(
+                              initialValue: snapshot.data?.ml_per_watering.toString(),
+                              label: 'Watering',
+                              hintText: 'Amount of water for watering',
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              validator: (val) {
+                                if (val!.isEmpty) {
+                                  return 'Watering is empty!';
+                                }
+                                return null;
+                              },
+                              onChanged: (val) {
+                                _health = val;
+                              }),
+                          CustomToggleButtons(
+                              isSelected: snapshot.data!.getWateringList(), onPressed: (
+                              int index) {
+                            setState(() {
+                              _wateringDaysList[index] =
+                              !_wateringDaysList[index];
+                            });
+                          }),
+                          CustomButton(
+                              onPressed: () {
+                                if (_formEditPlantKey.currentState!
+                                    .validate()) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      HomeScreen.routeName, (route) => false);
+                                }
+                              },
+                              height: 50,
+                              width: size.width / 2,
+                              fontSize: 30,
+                              textButton: 'Confirm'
+                          ),
+                        ],
                       ),
                     ),
-                    CustomTextFormField(
-                        initialValue: widget.startName,
-                        label: 'Name',
-                        hintText: 'Provide name of a plant',
-                        keyboardType: TextInputType.text,
-                        validator: (val){
-                          if (val!.isEmpty){
-                            return 'Name is empty!';
-                          }
-                          return null;
-                        },
-                        onChanged: (val){
-                          _name = val;
-                        }),
-                    CustomTextFormField(
-                        label: 'Health',
-                        hintText: 'Provide health of a plant',
-                        keyboardType: TextInputType.text,
-                        validator: (val){
-                          if (val!.isEmpty){
-                            return 'Health is empty!';
-                          }
-                          return null;
-                        },
-                        onChanged: (val){
-                          _health = val;
-                        }),
-                    CustomTextFormField(
-                        label: 'Watering',
-                        hintText: 'Amount of water for watering',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        validator: (val){
-                          if (val!.isEmpty){
-                            return 'Watering is empty!';
-                          }
-                          return null;
-                        },
-                        onChanged: (val){
-                          _health = val;
-                        }),
-                    CustomToggleButtons(isSelected: _wateringDaysList,onPressed: (int index)
-                    {
-                      setState(() {
-                        _wateringDaysList[index] = !_wateringDaysList[index];
-                      });
-                    }),
-                    CustomButton(
-                        onPressed: () {
-                          if (_formEditPlantKey.currentState!.validate()) {Navigator.of(context).pushNamedAndRemoveUntil(HomeScreen.routeName, (route) => false);}
-                        },
-                        height: 50,
-                        width: size.width/2,
-                        fontSize: 30,
-                        textButton: 'Confirm'
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+              );
+            }else{
+              return const Text('');
+            }
+          }
+
+
         )
     );
   }

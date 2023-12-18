@@ -57,8 +57,9 @@ class RequestHandler {
     try {
       var postData = {'flower_name': name, 'flower_image': encodedImage};
       var response = await api.postAuth('/api/flower',postData);
-      var fid = response['fid'];
-      return int.parse(fid);
+      var flower = response['message']['flower_id'];
+      print('flower_id: ' + flower.toString());
+      return flower;
     }catch (e) {
       print(e);
       return 0;
@@ -68,8 +69,7 @@ class RequestHandler {
   Future<bool> editPlant(String name, String? encodedImage, int fid) async {
     try {
       var postData = {'flower_name': name, 'flower_image': encodedImage};
-      var parameters = {'fid': fid};
-      var response = await api.postAuthParams('/api/flower',postData,parameters);
+      var response = await api.postAuth('/api/flower/$fid',postData);
       print('Register Response: $response');
       return true;
     }catch (e) {
@@ -77,6 +77,20 @@ class RequestHandler {
       return false;
     }
   }
+
+  Future<Plant?> getPlant(int fid) async {
+    try {
+      var response = await api.get('/api/flower/$fid');
+      print('Register New Response: $response');
+      var parsedPlant = response["flower_detail"];
+      Plant plant = Plant.fromJson(parsedPlant);
+      return plant;
+    }catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
 
 
 }

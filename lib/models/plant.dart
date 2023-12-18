@@ -26,16 +26,16 @@ class Plant{
 
   Map<String, dynamic> toJson() => _$PlantToJson(this);
 
-  List<int> getWateringList(){
-    var waterList = List<int>.empty();
+  List<bool> getWateringList(){
+    var waterList = List<bool>.empty(growable: true);
 
-    waterList.add(monday);
-    waterList.add(tuesday);
-    waterList.add(wednesday);
-    waterList.add(thursday);
-    waterList.add(friday);
-    waterList.add(saturday);
-    waterList.add(sunday);
+    waterList.add(monday == 0 ? false : true);
+    waterList.add(tuesday == 0 ? false : true);
+    waterList.add(wednesday == 0 ? false : true);
+    waterList.add(thursday == 0 ? false : true);
+    waterList.add(friday == 0 ? false : true);
+    waterList.add(saturday == 0 ? false : true);
+    waterList.add(sunday == 0 ? false : true);
 
     return waterList;
   }

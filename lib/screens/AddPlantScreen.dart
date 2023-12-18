@@ -85,12 +85,13 @@ class _AddPlantScreen extends State<AddPlantScreen>{
                           _name = val;
                     }),
                     CustomButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formAddPlantKey.currentState!.validate()) {
                             RequestHandler requestHandler = RequestHandler();
                             var bytes = File(_imgFile!.path).readAsBytesSync();
                             String? b64image = base64Encode(bytes);
-                            var fid = requestHandler.addPlant(_name,b64image);
+                            int fid = await requestHandler.addPlant(_name,b64image);
+                            print('fid: ' + fid.toString());
                             Navigator.push(
                             context,
                             MaterialPageRoute(
