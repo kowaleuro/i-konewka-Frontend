@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeState extends State<HomeScreen> {
   Future<List<Plant>?>? plants;
 
+  // TODO: change address
   final String deviceAddress = "00:11:22:33:FF:EE";
   BluetoothState bluetoothState = BluetoothState.UNKNOWN;
   BluetoothDevice? device;
@@ -70,7 +71,7 @@ class _HomeState extends State<HomeScreen> {
       // initialize the connection
       print('Initializing connection to device.');
       BluetoothConnection.toAddress(deviceAddress).then((BluetoothConnection conn) {
-        print('Connected to the device.');
+        print('$conn');
         setState(() {
           connection = conn;
         });
