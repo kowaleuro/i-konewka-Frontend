@@ -14,6 +14,7 @@ import 'package:i_konewka_app/screens/elements/CustomToggleButton.dart';
 import '../core/RequestHandler.dart';
 import '../main.dart';
 import 'elements/Bar.dart';
+import 'elements/StatefulBar.dart';
 
 class AddPlantScreen extends StatefulWidget {
 
@@ -38,7 +39,7 @@ class _AddPlantScreen extends State<AddPlantScreen>{
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-        appBar: const Bar(),
+        appBar: const BluetoothStatusWidgetBar(),
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.only(top: size.height/15),

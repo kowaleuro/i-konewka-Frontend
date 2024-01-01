@@ -3,6 +3,7 @@ import 'package:i_konewka_app/core/RequestHandler.dart';
 import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/CustomTextFormField.dart';
+import 'package:i_konewka_app/screens/elements/StatefulBar.dart';
 
 import '../main.dart';
 import 'elements/Bar.dart';
@@ -31,7 +32,7 @@ class _LoginScreen extends State<LoginScreen>{
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: const Bar(),
+      appBar: const BluetoothStatusWidgetBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: size.height/4),

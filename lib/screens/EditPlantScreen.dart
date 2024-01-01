@@ -12,6 +12,7 @@ import '../core/RequestHandler.dart';
 import '../main.dart';
 import '../models/plant.dart';
 import 'elements/Bar.dart';
+import 'elements/StatefulBar.dart';
 
 class EditPlantScreen extends StatefulWidget {
 
@@ -58,7 +59,7 @@ class _EditPlantScreen extends State<EditPlantScreen>{
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-        appBar: const Bar(),
+        appBar: const BluetoothStatusWidgetBar(),
         body: FutureBuilder(
           future: plantFuture,
           builder: (context, snapshot) {

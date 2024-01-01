@@ -8,6 +8,8 @@ import 'package:i_konewka_app/screens/RegisterScreen.dart';
 import 'package:i_konewka_app/screens/StartScreen.dart';
 import 'package:i_konewka_app/AppTheme.dart';
 import 'package:i_konewka_app/screens/elements/Bar.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:i_konewka_app/screens/elements/StatefulBar.dart';
 
 class App extends StatelessWidget {
   App({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class App extends StatelessWidget {
       title: title,
       theme: AppTheme.theme,
       home: Scaffold(
-        appBar: const Bar(),
+        appBar: const BluetoothStatusWidgetBar(),
         body: StartScreen(title: title,),
       ),
       navigatorKey: navigatorKey,

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:i_konewka_app/core/BluetoothHelper.dart';
 import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:i_konewka_app/screens/elements/CustomLoadingPopUp.dart';
@@ -19,6 +21,7 @@ class PlantContainer extends StatefulWidget {
     required this.name,
     required this.icon,
     required this.image,
+    required this.water,
   });
 
   final double height;
@@ -27,6 +30,7 @@ class PlantContainer extends StatefulWidget {
   final String? name;
   final Uint8List image;
   final IconData icon;
+  final String water;
   final colorWhite = Colors.white;
   final colorGreen = Colors.green;
 
@@ -35,10 +39,15 @@ class PlantContainer extends StatefulWidget {
 }
 
 class _PlantContainerState extends State<PlantContainer>{
+  BluetoothHelper helper = BluetoothHelper.instance;
+  bool isConnected = false;
+  BluetoothConnection? ikonewka_connection;
 
   @override
   void initState() {
     super.initState();
+    helper.returnConnection().then((connection) {ikonewka_connection = connection;});
+    helper.verifyIkonewkaConnection(ikonewka_connection!).then((bool _isConnected) {isConnected = _isConnected;});
   }
 
   @override
@@ -62,7 +71,7 @@ class _PlantContainerState extends State<PlantContainer>{
                   padding: const EdgeInsets.all(20.0),
                   child: PlantImage(image: widget.image, radius: 50,),
                 ),
-                Flexible(child: Text(widget.name!,style: TextStyle(fontSize: widget.fontSize),)),
+                Flexible(child: Text(widget.name!, style: TextStyle(fontSize: widget.fontSize),)),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Icon(widget.icon),
@@ -72,13 +81,15 @@ class _PlantContainerState extends State<PlantContainer>{
           ),
         ),
       ),
-      onTap: (){
-        Alert(
-            type:AlertType.warning,
-            style:CustomAlertStyle.alertStyle,
+      onTap: () {
+        if (isConnected) {
+          // Display alert for watering
+          Alert(
+            type: AlertType.warning,
+            style: CustomAlertStyle.alertStyle,
             context: context,
             title: "Do you want to start watering?",
-            desc: "Watch out! If you will press START, water will begin to flow.",
+            desc: "Watch out! If you press START, water will begin to flow.",
             buttons: [
               DialogButton(
                 onPressed: () => Navigator.pop(context),
@@ -91,12 +102,13 @@ class _PlantContainerState extends State<PlantContainer>{
                 ),
               ),
               DialogButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
                   // TODO: implement blueetooh-watering and uncomment dismiss
-                  // popUp.dismiss();
+                  helper.sendWater(ikonewka_connection!, widget.water);
+                  popUp.dismiss();
                 },
                 color: Colors.green,
                 child: const Text(
@@ -107,8 +119,33 @@ class _PlantContainerState extends State<PlantContainer>{
                 ),
               )
             ],
-        ).show();},
-      onLongPress: (){navigatorKey.currentState?.pushNamed(EditPlantScreen.routeName);},
+          ).show();
+        } else {
+          // Display alert for not connected
+          Alert(
+            type: AlertType.error,
+            style: CustomAlertStyle.alertStyle,
+            context: context,
+            title: "Cannot water the plant",
+            desc: "Please make sure the device is connected before watering.",
+            buttons: [
+              DialogButton(
+                onPressed: () => Navigator.pop(context),
+                color: Colors.red,
+                child: const Text(
+                  "OK",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ],
+          ).show();
+        }
+      },
+      onLongPress: () {
+        navigatorKey.currentState?.pushNamed(EditPlantScreen.routeName);
+      },
     );
   }
 }
