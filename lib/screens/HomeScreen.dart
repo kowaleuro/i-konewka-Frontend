@@ -57,25 +57,26 @@ class _HomeState extends State<HomeScreen> {
       await Future.delayed(const Duration(milliseconds: 0xDD));
       return true;
     }).then((_) {
+      // TODO: uncomment
       // bond the device
-      FlutterBluetoothSerial.instance.bondDeviceAtAddress(deviceAddress).then((bool? bond){
-        if(bond ?? false){
-          print('Successfully bonded.');
-          setState(() {
-            bondState = bond;
-          });
-        } else {
-          print('Failed to bond.');
-        }
-      });
-      // initialize the connection
-      print('Initializing connection to device.');
-      BluetoothConnection.toAddress(deviceAddress).then((BluetoothConnection conn) {
-        print('$conn');
-        setState(() {
-          connection = conn;
-        });
-      });
+      // FlutterBluetoothSerial.instance.bondDeviceAtAddress(deviceAddress).then((bool? bond){
+      //   if(bond ?? false){
+      //     print('Successfully bonded.');
+      //     setState(() {
+      //       bondState = bond;
+      //     });
+      //   } else {
+      //     print('Failed to bond.');
+      //   }
+      // });
+      // // initialize the connection
+      // print('Initializing connection to device.');
+      // BluetoothConnection.toAddress(deviceAddress).then((BluetoothConnection conn) {
+      //   print('$conn');
+      //   setState(() {
+      //     connection = conn;
+      //   });
+      // });
     });
     // To propagate adapter state to children widgets
     FlutterBluetoothSerial.instance
@@ -121,6 +122,7 @@ class _HomeState extends State<HomeScreen> {
 
               }else{
                 return const Text('');
+
               }
             }
           )

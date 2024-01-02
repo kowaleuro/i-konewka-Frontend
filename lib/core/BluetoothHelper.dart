@@ -12,7 +12,7 @@ class BluetoothHelper {
   BluetoothBondState bondState = BluetoothBondState.unknown;
   static BluetoothHelper? _instance;
 
-  BluetoothHelper._(){
+  BluetoothHelper._() {
     FlutterBluetoothSerial.instance.state.then((state) {
       bluetoothState = state;
     });
@@ -26,12 +26,21 @@ class BluetoothHelper {
     return _instance!;
   }
 
+  String get address {
+    return deviceAddress;
+  }
+
   Future<bool> bondDevice() async {
-    FlutterBluetoothSerial.instance.bondDeviceAtAddress(deviceAddress).then((bool? bondResult){
+    FlutterBluetoothSerial.instance
+        .bondDeviceAtAddress(deviceAddress)
+        .then((bool? bondResult) {
       // black wizardy
-      if(bondResult ?? true) return false;
+      print('bond result at bondDevice: $bondResult');
+      if (bondResult ?? true) return false;
       print('Bonded with i-konewka.');
-      FlutterBluetoothSerial.instance.getBondStateForAddress(deviceAddress).then((BluetoothBondState state){
+      FlutterBluetoothSerial.instance
+          .getBondStateForAddress(deviceAddress)
+          .then((BluetoothBondState state) {
         bondState = state;
       });
       return true;
@@ -62,8 +71,7 @@ class BluetoothHelper {
       }).onDone(() {
         print('Disconnected by remote request');
       });
-    }
-    catch (exception) {
+    } catch (exception) {
       print('Cannot connect, exception occured');
     }
     return _is_connected;
@@ -79,8 +87,7 @@ class BluetoothHelper {
 
         connection.output.add(water_data);
         await connection.output.allSent;
-      }
-      catch (exception) {
+      } catch (exception) {
         print('Cannot write, exception occured');
       }
       return true;

@@ -6,6 +6,9 @@ import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
 import 'package:i_konewka_app/screens/RegisterScreen.dart';
 import 'package:i_konewka_app/screens/StartScreen.dart';
+import 'package:i_konewka_app/screens/MainBtPage.dart';
+import 'package:i_konewka_app/screens/DiscoveryPage.dart';
+import 'package:i_konewka_app/screens/SelectBondedDevicePage.dart';
 import 'package:i_konewka_app/AppTheme.dart';
 import 'package:i_konewka_app/screens/elements/Bar.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -39,6 +42,12 @@ class App extends StatelessWidget {
             const AddPlantScreen(),
         EditPlantScreen.routeName: (context) =>
             const EditPlantScreen(startName: null,plantId: null,),
+        MainBTDebugPage.routeName: (context) =>
+             MainBTDebugPage(),
+        SelectBondedDevicePage.routeName: (context) =>
+            const SelectBondedDevicePage(),
+        DiscoveryPage.routeName: (context) =>
+            const DiscoveryPage(),
       }
     );
   }

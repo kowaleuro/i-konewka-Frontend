@@ -22,7 +22,7 @@ class _BluetoothStatusWidgetStateBar extends State<BluetoothStatusWidgetBar> {
     super.initState();
     _checkAdapterStatus();
     _checkBluetoothStatus();
-    _checkBluetoothBondStatus();
+    // _checkBluetoothBondStatus();
   }
 
   Future<void> _checkAdapterStatus() async {
