@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,8 +50,13 @@ class _EditPlantScreen extends State<EditPlantScreen>{
       RequestHandler requestHandler = RequestHandler();
       print('hej' + widget.plantId.toString());
       var plantData = requestHandler.getPlant(widget.plantId);
-      setState(() {
+      setState(() async {
         plantFuture = plantData;
+        Plant? plant = await plantFuture.then((value){
+          _wateringDaysList = value!.getWateringList();
+          _name = value!.name;
+          _waterMl = value!.ml_per_watering;
+        });
       });
     });
   }
@@ -62,8 +70,10 @@ class _EditPlantScreen extends State<EditPlantScreen>{
         body: FutureBuilder(
           future: plantFuture,
           builder: (context, snapshot) {
+
             if (snapshot.hasData &&
                 snapshot.connectionState == ConnectionState.done) {
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.only(top: size.height / 15),
@@ -110,6 +120,7 @@ class _EditPlantScreen extends State<EditPlantScreen>{
                               },
                               onChanged: (val) {
                                 _name = val;
+                                print(_name);
                               }),
                           CustomTextFormField(
                               initialValue: snapshot.data?.health,
@@ -143,17 +154,19 @@ class _EditPlantScreen extends State<EditPlantScreen>{
                                 _health = val;
                               }),
                           CustomToggleButtons(
-                              isSelected: snapshot.data!.getWateringList(), onPressed: (
-                              int index) {
-                            setState(() {
-                              _wateringDaysList[index] =
-                              !_wateringDaysList[index];
-                            });
-                          }),
+                              isSelected: _wateringDaysList,
+                              onPressed: (int index) {
+                                setState(() {
+                                  _wateringDaysList[index] =
+                                  !_wateringDaysList[index];
+                                  print(_wateringDaysList.toString());
+                                });
+                              }),
                           CustomButton(
                               onPressed: () {
                                 if (_formEditPlantKey.currentState!
                                     .validate()) {
+                                  edit(_name,_waterMl,_wateringDaysList);
                                   Navigator.of(context).pushNamedAndRemoveUntil(
                                       HomeScreen.routeName, (route) => false);
                                 }
@@ -187,6 +200,15 @@ class _EditPlantScreen extends State<EditPlantScreen>{
     if (!mounted) return;
 
     _imgFile = result;
+    var bytes = File(_imgFile!.path).readAsBytesSync();
+    String? b64image = base64Encode(bytes);
+    RequestHandler requestHandler = RequestHandler();
+    requestHandler.addPhoto(widget.plantId, b64image);
+  }
+
+  void edit(String name, int water, List<bool> waterList) async{
+    RequestHandler requestHandler = RequestHandler();
+    requestHandler.editPlant(name,water,waterList,widget.plantId);
   }
 }
 

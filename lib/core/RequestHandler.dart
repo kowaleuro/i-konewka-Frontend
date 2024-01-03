@@ -66,10 +66,20 @@ class RequestHandler {
     }
   }
 
-  Future<bool> editPlant(String name, String? encodedImage, int fid) async {
+  Future<bool> editPlant(String name, int mlWatering, List<bool> wateringList, int fid) async {
     try {
-      var postData = {'flower_name': name, 'flower_image': encodedImage};
-      var response = await api.postAuth('/api/flower/$fid',postData);
+      var postData = {'name': name,
+        'ml_per_watering': mlWatering,
+        'monday': wateringList[0] ? 1 : 0,
+        'tuesday': wateringList[1] ? 1 : 0,
+        'wednesday': wateringList[2] ? 1 : 0,
+        'thursday': wateringList[3] ? 1 : 0,
+        'friday': wateringList[4] ? 1 : 0,
+        'saturday': wateringList[5] ? 1 : 0,
+        'sunday': wateringList[6] ? 1 : 0,
+      };
+      print('data' + postData.toString());
+      var response = await api.put('/api/flower/$fid',postData);
       print('Register Response: $response');
       return true;
     }catch (e) {
@@ -88,6 +98,17 @@ class RequestHandler {
     }catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  Future<bool> addPhoto(int fid, String? encodedImage) async {
+    try {
+      var postData = {'fid':fid,'flower_image': encodedImage};
+      var response = await api.postAuth('/api/flower_photo',postData);
+      return true;
+    }catch (e) {
+      print(e);
+      return false;
     }
   }
 

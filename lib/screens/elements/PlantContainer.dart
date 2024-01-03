@@ -18,7 +18,7 @@ class PlantContainer extends StatefulWidget {
     required this.fontSize,
     required this.name,
     required this.icon,
-    required this.image,
+    required this.image, required this.plantId,
   });
 
   final double height;
@@ -29,6 +29,7 @@ class PlantContainer extends StatefulWidget {
   final IconData icon;
   final colorWhite = Colors.white;
   final colorGreen = Colors.green;
+  final int? plantId;
 
   @override
   State<StatefulWidget> createState() => _PlantContainerState();
@@ -108,7 +109,11 @@ class _PlantContainerState extends State<PlantContainer>{
               )
             ],
         ).show();},
-      onLongPress: (){navigatorKey.currentState?.pushNamed(EditPlantScreen.routeName);},
+      onLongPress: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+          builder: (context) => EditPlantScreen(plantId: widget.plantId, startName: widget.name,)));},
     );
   }
 }

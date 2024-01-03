@@ -52,7 +52,7 @@ class _HomeState extends State<HomeScreen> {
                     shrinkWrap: true,
                     reverse: false,
                     itemBuilder: (context, index) =>
-                        PlantContainer(height: 100, width: 100, fontSize: 28, name:  snapshot.data?[index].name, icon: Icons.sentiment_very_satisfied,image: snapshot.data![index].getImageWidget(),),
+                        PlantContainer(height: 100, width: 100, fontSize: 28, name:  snapshot.data?[index].name, icon: Icons.sentiment_very_satisfied,image: snapshot.data![index].getImageWidget(),plantId: snapshot.data![index].fid,),
                     itemCount: snapshot.data!.length,
                     separatorBuilder: (BuildContext context, int index) =>  const SizedBox(height:0)
                 );
