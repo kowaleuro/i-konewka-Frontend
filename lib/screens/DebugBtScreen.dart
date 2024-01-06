@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:bluetooth_classic/bluetooth_classic.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DebugBtScreen extends StatefulWidget {
   const DebugBtScreen({super.key});
@@ -24,10 +25,13 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   int _deviceStatus = Device.disconnected;
   String? _ikonewkaConnectionConfirm;
   Uint8List _data = Uint8List(0);
+  bool? _bluetoothPermissions;
+
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    initPermissionsApi34();
     _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
       print('device state changed: $_deviceStatus -> $event');
       setState(() {
@@ -64,6 +68,20 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     });
   }
 
+  Future<void> initPermissionsApi34() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetoothScan,
+      Permission.bluetoothAdvertise
+    ].request();
+
+    if (statuses[Permission.bluetoothScan] == PermissionStatus.granted &&
+        statuses[Permission.bluetoothAdvertise] == PermissionStatus.granted) {
+      setState(() {
+        _bluetoothPermissions = true;
+      });
+    }
+  }
+
   Future<void> _getDevices() async {
     var res = await _bluetoothClassicPlugin.getPairedDevices();
     setState(() {
@@ -81,6 +99,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
       await _bluetoothClassicPlugin.startScan();
       _bluetoothClassicPlugin.onDeviceDiscovered().listen(
         (event) {
+          print('event: $event');
           setState(() {
             _discoveredDevices = [..._discoveredDevices, event];
           });
@@ -90,6 +109,12 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
         _scanning = true;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    print('dispose');
+    super.dispose();
   }
 
   @override
@@ -202,12 +227,14 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             Divider(),
             ListTile(
                 trailing: ElevatedButton(
-              onPressed: _scan,
+              onPressed:
+                  (_bluetoothPermissions ?? false) == true ? _scan : null,
               child: Text(_scanning ? "Stop Scan" : "Start Scan"),
             )),
             ...[
               for (var device in _discoveredDevices)
-                ListTile(trailing: Text(device.name ?? device.address))
+                // ListTile(trailing: Text(device.name ?? device.address))
+                Text(device.name ?? device.address)
             ],
             Divider(),
             ListTile(

@@ -43,6 +43,7 @@ dependencies:
   json_serializable: ^6.7.1
   json_annotation: ^4.8.0
   bluetooth_classic: ^0.0.1
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   flutter_test:
