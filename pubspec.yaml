@@ -42,6 +42,7 @@ dependencies:
   flutter_session_jwt: ^0.0.5
   json_serializable: ^6.7.1
   json_annotation: ^4.8.0
+  bluetooth_classic: ^0.0.1
 
 dev_dependencies:
   flutter_test:

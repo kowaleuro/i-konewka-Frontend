@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/AddPlantScreen.dart';
+import 'package:i_konewka_app/screens/DebugBtScreen.dart';
 import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/HomeScreen.dart';
 import 'package:i_konewka_app/screens/LoginScreen.dart';
@@ -17,28 +18,26 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: title,
-      theme: AppTheme.theme,
-      home: Scaffold(
-        appBar: const Bar(),
-        body: StartScreen(title: title,),
-      ),
-      navigatorKey: navigatorKey,
-      routes:{
-        StartScreen.routeName: (context) =>
-             StartScreen(title: title),
-        LoginScreen.routeName: (context) =>
-            const LoginScreen(),
-        HomeScreen.routeName: (context) =>
-            const HomeScreen(),
-        RegisterScreen.routeName: (context) =>
-            const RegisterScreen(),
-        AddPlantScreen.routeName: (context) =>
-            const AddPlantScreen(),
-        EditPlantScreen.routeName: (context) =>
-            const EditPlantScreen(startName: null,plantId: null,),
-      }
-    );
+        title: title,
+        theme: AppTheme.theme,
+        home: Scaffold(
+          appBar: const Bar(),
+          body: StartScreen(
+            title: title,
+          ),
+        ),
+        navigatorKey: navigatorKey,
+        routes: {
+          StartScreen.routeName: (context) => StartScreen(title: title),
+          LoginScreen.routeName: (context) => const LoginScreen(),
+          HomeScreen.routeName: (context) => const HomeScreen(),
+          RegisterScreen.routeName: (context) => const RegisterScreen(),
+          AddPlantScreen.routeName: (context) => const AddPlantScreen(),
+          EditPlantScreen.routeName: (context) => const EditPlantScreen(
+                startName: null,
+                plantId: null,
+              ),
+          DebugBtScreen.routeName: (context) => const DebugBtScreen()
+        });
   }
 }
-
