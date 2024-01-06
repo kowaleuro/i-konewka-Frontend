@@ -32,7 +32,7 @@ class PlantContainer extends StatefulWidget {
   final colorWhite = Colors.white;
   final colorGreen = Colors.green;
   final int? plantId;
-  final String waterAmount;
+  final int waterAmount;
 
   @override
   State<StatefulWidget> createState() => _PlantContainerState();
@@ -61,11 +61,12 @@ class _PlantContainerState extends State<PlantContainer> {
     await _bluetoothClassicPlugin.initPermissions();
     await _bluetoothClassicPlugin
         .connect(deviceAddress, defaultUuid)
-        .then((bool result) => {
-              setState(() {
-                connectionUp = result;
-              })
-            });
+        .then((bool result) {
+      print('connection result in plant container: $result');
+      setState(() {
+        connectionUp = result;
+      });
+    });
   }
 
   @override
@@ -131,8 +132,8 @@ class _PlantContainerState extends State<PlantContainer> {
                   Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
-                  await _bluetoothClassicPlugin.write(widget.waterAmount);
-                  // popUp.dismiss();
+                  await _bluetoothClassicPlugin.write("$widget.waterAmount");
+                  popUp.dismiss();
                 },
                 color: Colors.green,
                 child: const Text(

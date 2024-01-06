@@ -94,26 +94,34 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text("Device status is $_deviceStatus"),
-              TextButton(
-                onPressed: () async {
-                  await _bluetoothClassicPlugin.initPermissions();
-                },
-                child: const Text("Check Permissions"),
-              ),
-              TextButton(
-                onPressed: _getDevices,
-                child: const Text("Get Paired Devices"),
-              ),
-              TextButton(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Debug BT screen'),
+      ),
+      body: Container(
+        alignment: Alignment.center,
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              title: const Text('Device status'),
+              subtitle: Text("Device status is $_deviceStatus"),
+            ),
+            ListTile(
+              trailing: ElevatedButton(
+                  child: const Text("Check Permissions"),
+                  onPressed: () async {
+                    await _bluetoothClassicPlugin.initPermissions();
+                  }),
+            ),
+            ListTile(
+              trailing: ElevatedButton(
+                  child: const Text("Get Paired Devices"),
+                  onPressed: () async {
+                    _getDevices;
+                  }),
+            ),
+            ListTile(
+              trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
                         await _bluetoothClassicPlugin.disconnect();
@@ -121,7 +129,9 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                     : null,
                 child: const Text("disconnect"),
               ),
-              TextButton(
+            ),
+            ListTile(
+              trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
                         _bluetoothClassicPlugin.write("connect,ok");
@@ -140,7 +150,9 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                     : null,
                 child: const Text("send 'connect,ok'"),
               ),
-              TextButton(
+            ),
+            ListTile(
+              trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
                         await _bluetoothClassicPlugin.write("water,123");
@@ -148,7 +160,9 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                     : null,
                 child: const Text("send 'water,123'"),
               ),
-              TextButton(
+            ),
+            ListTile(
+              trailing: ElevatedButton(
                 onPressed: _deviceStatus != Device.connected
                     ? () async {
                         await _bluetoothClassicPlugin
@@ -165,33 +179,41 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                     : null,
                 child: const Text("connect ikonewka"),
               ),
-              Center(
-                child: Text('Running on: $_platformVersion\n'),
-              ),
-              ...[
-                for (var device in _devices)
-                  TextButton(
-                      onPressed: () async {
-                        await _bluetoothClassicPlugin.connect(
-                            device.address, defaultUuid);
-                        setState(() {
-                          _discoveredDevices = [];
-                          _devices = [];
-                        });
-                      },
-                      child: Text(device.name ?? device.address))
-              ],
-              TextButton(
-                onPressed: _scan,
-                child: Text(_scanning ? "Stop Scan" : "Start Scan"),
-              ),
-              ...[
-                for (var device in _discoveredDevices)
-                  Text(device.name ?? device.address)
-              ],
-              Text("Received data: ${String.fromCharCodes(_data)}"),
+            ),
+            Divider(),
+            ListTile(
+              title: const Text('Platform'),
+              subtitle: Text('Running on: $_platformVersion\n'),
+            ),
+            ...[
+              for (var device in _devices)
+                ListTile(
+                    trailing: ElevatedButton(
+                        onPressed: () async {
+                          await _bluetoothClassicPlugin.connect(
+                              device.address, defaultUuid);
+                          setState(() {
+                            _discoveredDevices = [];
+                            _devices = [];
+                          });
+                        },
+                        child: Text(device.name ?? device.address)))
             ],
-          ),
+            Divider(),
+            ListTile(
+                trailing: ElevatedButton(
+              onPressed: _scan,
+              child: Text(_scanning ? "Stop Scan" : "Start Scan"),
+            )),
+            ...[
+              for (var device in _discoveredDevices)
+                ListTile(trailing: Text(device.name ?? device.address))
+            ],
+            Divider(),
+            ListTile(
+                trailing:
+                    Text("Received data: ${String.fromCharCodes(_data)}")),
+          ],
         ),
       ),
     );
