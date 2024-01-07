@@ -132,7 +132,8 @@ class _PlantContainerState extends State<PlantContainer> {
                   Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
-                  await _bluetoothClassicPlugin.write("$widget.waterAmount");
+                  await _bluetoothClassicPlugin
+                      .write("water $widget.waterAmount");
                   popUp.dismiss();
                 },
                 color: Colors.green,

@@ -4,7 +4,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:bluetooth_classic/bluetooth_classic.dart';
+import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DebugBtScreen extends StatefulWidget {
   const DebugBtScreen({super.key});
@@ -159,7 +161,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
-                        _bluetoothClassicPlugin.write("connect,ok");
+                        _bluetoothClassicPlugin.write("connect ");
                         _bluetoothClassicPlugin
                             .onDeviceDataReceived()
                             .listen((event) {
@@ -173,17 +175,17 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                         });
                       }
                     : null,
-                child: const Text("send 'connect,ok'"),
+                child: const Text("send 'connect '"),
               ),
             ),
             ListTile(
               trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
-                        await _bluetoothClassicPlugin.write("water,123");
+                        await _bluetoothClassicPlugin.write("water 123");
                       }
                     : null,
-                child: const Text("send 'water,123'"),
+                child: const Text("send 'water 123'"),
               ),
             ),
             ListTile(
@@ -215,12 +217,37 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                 ListTile(
                     trailing: ElevatedButton(
                         onPressed: () async {
-                          await _bluetoothClassicPlugin.connect(
+                          var _status = await _bluetoothClassicPlugin.connect(
                               device.address, defaultUuid);
                           setState(() {
                             _discoveredDevices = [];
                             _devices = [];
                           });
+                          if (!_status) {
+                            Alert(
+                              type: AlertType.error,
+                              style: CustomAlertStyle.alertStyle,
+                              context: context,
+                              title: "Couldnt connect",
+                              desc:
+                                  "Please make sure the bt is enabled and redo connect.",
+                              buttons: [
+                                DialogButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  color: Colors.red,
+                                  child: const Text(
+                                    "OK",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 20),
+                                  ),
+                                ),
+                              ],
+                            ).show();
+                          }
                         },
                         child: Text(device.name ?? device.address)))
             ],

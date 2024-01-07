@@ -44,6 +44,7 @@ dependencies:
   json_annotation: ^4.8.0
   bluetooth_classic: ^0.0.1
   permission_handler: ^11.1.0
+  connectivity: ^3.0.6
 
 dev_dependencies:
   flutter_test:
