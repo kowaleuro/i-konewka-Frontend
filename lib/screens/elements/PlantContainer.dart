@@ -21,7 +21,8 @@ class PlantContainer extends StatefulWidget {
       required this.icon,
       required this.image,
       required this.plantId,
-      required this.waterAmount});
+      required this.waterAmount,
+      required this.connectionStatus});
 
   final double height;
   final double width;
@@ -33,6 +34,7 @@ class PlantContainer extends StatefulWidget {
   final colorGreen = Colors.green;
   final int? plantId;
   final int waterAmount;
+  final bool connectionStatus;
 
   @override
   State<StatefulWidget> createState() => _PlantContainerState();
@@ -40,21 +42,21 @@ class PlantContainer extends StatefulWidget {
 
 class _PlantContainerState extends State<PlantContainer> {
   final _bluetoothClassicPlugin = BluetoothClassic();
+  bool? connectionUp = true;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  bool? connectionUp;
-  int _deviceStatus = Device.disconnected;
+  // int _deviceStatus = Device.disconnected;
 
   @override
   void initState() {
     super.initState();
-    initConnection();
-    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-      print('device state changed: $_deviceStatus -> $event');
-      setState(() {
-        _deviceStatus = event;
-      });
-    });
+    // initConnection();
+    // _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+    //   print('device state changed: $_deviceStatus -> $event');
+    //   setState(() {
+    //     _deviceStatus = event;
+    //   });
+    // });
   }
 
   Future<void> initConnection() async {
@@ -107,7 +109,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (connectionUp! && _deviceStatus == Device.connected) {
+        if (widget.connectionStatus) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
@@ -132,8 +134,7 @@ class _PlantContainerState extends State<PlantContainer> {
                   Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
-                  await _bluetoothClassicPlugin
-                      .write("water $widget.waterAmount");
+                  _bluetoothClassicPlugin.write("water $widget.waterAmount");
                   popUp.dismiss();
                 },
                 color: Colors.green,

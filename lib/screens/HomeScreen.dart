@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:i_konewka_app/core/RequestHandler.dart';
 import 'package:i_konewka_app/models/plant.dart';
 import 'package:i_konewka_app/screens/AddPlantScreen.dart';
+import 'package:i_konewka_app/screens/elements/CustomButton.dart';
 import 'package:i_konewka_app/screens/elements/PlantContainer.dart';
 
 import '../main.dart';
@@ -30,7 +32,10 @@ class _HomeState extends State<HomeScreen> {
   bool _scanning = false;
   String _platformVersion = 'Unknown';
   int _deviceStatus = Device.disconnected;
+  bool? _connectionStatus = false;
   Uint8List _data = Uint8List(0);
+  final String deviceAddress = 'B4:E6:2D:86:FC:4F';
+  final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   // BT BLOCK
 
   @override
@@ -57,6 +62,14 @@ class _HomeState extends State<HomeScreen> {
         _data = Uint8List.fromList([..._data, ...event]);
       });
     });
+    // _bluetoothClassicPlugin.connect(deviceAddress, defaultUuid).then((result) {
+    //   print('ikonewka: ${result ? "connected" : "not connected"}');
+    //   setState(() {
+    //     _connectionStatus = result;
+    //     _discoveredDevices = [];
+    //     _devices = [];
+    //   });
+    // });
     // BT init
   }
 
@@ -117,34 +130,65 @@ class _HomeState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Color? color;
+    if (0 == _deviceStatus) {
+      color = Colors.red;
+    } else if (_deviceStatus == 1) {
+      color = Colors.orange;
+    } else {
+      color = Colors.greenAccent;
+    }
+
     return Scaffold(
       appBar: const Bar(),
-      body: Center(
-        child: SingleChildScrollView(
-            child: FutureBuilder<List<Plant>?>(
-                future: plants,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    return ListView.separated(
-                        shrinkWrap: true,
-                        reverse: false,
-                        itemBuilder: (context, index) => PlantContainer(
-                            height: 100,
-                            width: 100,
-                            fontSize: 28,
-                            name: snapshot.data?[index].name,
-                            icon: Icons.sentiment_very_satisfied,
-                            image: snapshot.data![index].getImageWidget(),
-                            plantId: snapshot.data![index].fid,
-                            waterAmount: snapshot.data![index].ml_per_watering),
-                        itemCount: snapshot.data!.length,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            const SizedBox(height: 0));
-                  } else {
-                    return const Text('');
-                  }
-                })),
+      body: Column(
+        children: [
+          ElevatedButton(
+              onPressed: null,
+              style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width * 0.01,
+                      left: MediaQuery.of(context).size.width * 0.01,
+                      right: MediaQuery.of(context).size.width * 0.01,
+                      bottom: MediaQuery.of(context).size.width * 0.01),
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width / 1.5, 30),
+                  backgroundColor: Colors.red,
+                  disabledBackgroundColor: color),
+              child: Text(
+                "Device status: $_deviceStatus",
+                style: GoogleFonts.nunitoSans(
+                    textStyle: TextStyle(color: Colors.white, fontSize: 30)),
+              )),
+          Divider(),
+          SingleChildScrollView(
+              child: FutureBuilder<List<Plant>?>(
+                  future: plants,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      return ListView.separated(
+                          shrinkWrap: true,
+                          reverse: false,
+                          itemBuilder: (context, index) => PlantContainer(
+                              height: 100,
+                              width: 100,
+                              fontSize: 28,
+                              name: snapshot.data?[index].name,
+                              icon: Icons.sentiment_very_satisfied,
+                              image: snapshot.data![index].getImageWidget(),
+                              plantId: snapshot.data![index].fid,
+                              waterAmount:
+                                  snapshot.data![index].ml_per_watering,
+                              connectionStatus: _connectionStatus!),
+                          itemCount: snapshot.data!.length,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              const SizedBox(height: 0));
+                    } else {
+                      return const Text('');
+                    }
+                  })),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
