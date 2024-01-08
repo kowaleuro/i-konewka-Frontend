@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:bluetooth_classic/bluetooth_classic.dart';
+import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -25,7 +26,6 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   List<Device> _discoveredDevices = [];
   bool _scanning = false;
   int _deviceStatus = Device.disconnected;
-  String? _ikonewkaConnectionConfirm;
   Uint8List _data = Uint8List(0);
   bool? _bluetoothPermissions;
 
@@ -34,12 +34,13 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     super.initState();
     initPlatformState();
     initPermissionsApi34();
-    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-      print('device state changed: $_deviceStatus -> $event');
-      setState(() {
-        _deviceStatus = event;
+    if (!IS_LISTENED_TO) {
+      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+        setState(() {
+          _deviceStatus = event;
+        });
       });
-    });
+    }
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
       print('data received: $event');
       setState(() {
@@ -168,9 +169,6 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                           setState(() {
                             print(
                                 'data received: ${String.fromCharCodes(event)}');
-                            _ikonewkaConnectionConfirm =
-                                String.fromCharCodes(event);
-                            _data = Uint8List.fromList([..._data, ...event]);
                           });
                         });
                       }

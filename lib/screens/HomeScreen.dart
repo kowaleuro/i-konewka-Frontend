@@ -30,10 +30,7 @@ class _HomeState extends State<HomeScreen> {
   List<Device> _devices = [];
   List<Device> _discoveredDevices = [];
   bool _scanning = false;
-  String _platformVersion = 'Unknown';
   int _deviceStatus = Device.disconnected;
-  bool? _connectionStatus = false;
-  Uint8List _data = Uint8List(0);
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   // BT BLOCK
@@ -51,26 +48,13 @@ class _HomeState extends State<HomeScreen> {
     });
     // BT init
     _bluetoothClassicPlugin.initPermissions().then((value) => null);
-    initPlatformState();
-    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-      setState(() {
-        _deviceStatus = event;
+    if (!IS_LISTENED_TO) {
+      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+        setState(() {
+          _deviceStatus = event;
+        });
       });
-    });
-    _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
-      setState(() {
-        _data = Uint8List.fromList([..._data, ...event]);
-      });
-    });
-    // _bluetoothClassicPlugin.connect(deviceAddress, defaultUuid).then((result) {
-    //   print('ikonewka: ${result ? "connected" : "not connected"}');
-    //   setState(() {
-    //     _connectionStatus = result;
-    //     _discoveredDevices = [];
-    //     _devices = [];
-    //   });
-    // });
-    // BT init
+    }
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -179,8 +163,7 @@ class _HomeState extends State<HomeScreen> {
                               image: snapshot.data![index].getImageWidget(),
                               plantId: snapshot.data![index].fid,
                               waterAmount:
-                                  snapshot.data![index].ml_per_watering,
-                              connectionStatus: _connectionStatus!),
+                                  snapshot.data![index].ml_per_watering),
                           itemCount: snapshot.data!.length,
                           separatorBuilder: (BuildContext context, int index) =>
                               const SizedBox(height: 0));

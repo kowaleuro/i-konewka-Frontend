@@ -21,8 +21,7 @@ class PlantContainer extends StatefulWidget {
       required this.icon,
       required this.image,
       required this.plantId,
-      required this.waterAmount,
-      required this.connectionStatus});
+      required this.waterAmount});
 
   final double height;
   final double width;
@@ -34,7 +33,6 @@ class PlantContainer extends StatefulWidget {
   final colorGreen = Colors.green;
   final int? plantId;
   final int waterAmount;
-  final bool connectionStatus;
 
   @override
   State<StatefulWidget> createState() => _PlantContainerState();
@@ -45,22 +43,24 @@ class _PlantContainerState extends State<PlantContainer> {
   bool? connectionUp = true;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  // int _deviceStatus = Device.disconnected;
+  int _deviceStatus = Device.disconnected;
 
   @override
   void initState() {
     super.initState();
-    // initConnection();
-    // _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-    //   print('device state changed: $_deviceStatus -> $event');
-    //   setState(() {
-    //     _deviceStatus = event;
-    //   });
-    // });
+    initConnection();
+    if (!IS_LISTENED_TO) {
+      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+        print('device state changed: $_deviceStatus -> $event');
+        setState(() {
+          _deviceStatus = event;
+        });
+      });
+    }
   }
 
   Future<void> initConnection() async {
-    await _bluetoothClassicPlugin.initPermissions();
+    // await _bluetoothClassicPlugin.initPermissions();
     await _bluetoothClassicPlugin
         .connect(deviceAddress, defaultUuid)
         .then((bool result) {
@@ -109,7 +109,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (widget.connectionStatus) {
+        if (_deviceStatus == 2 || connectionUp!) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
