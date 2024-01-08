@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
+import 'package:i_konewka_app/screens/DebugBtScreen.dart';
 import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:i_konewka_app/screens/elements/CustomLoadingPopUp.dart';
@@ -41,8 +42,8 @@ class PlantContainer extends StatefulWidget {
 }
 
 class _PlantContainerState extends State<PlantContainer> {
-  final _bluetoothClassicPlugin = BluetoothClassic();
-  bool? connectionUp = true;
+  // final BT_DEV = BluetoothClassic();
+  bool? connectionUp;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   // int _deviceStatus = Device.disconnected;
@@ -50,20 +51,11 @@ class _PlantContainerState extends State<PlantContainer> {
   @override
   void initState() {
     super.initState();
-    // initConnection();
-    // _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-    //   print('device state changed: $_deviceStatus -> $event');
-    //   setState(() {
-    //     _deviceStatus = event;
-    //   });
-    // });
   }
 
   Future<void> initConnection() async {
-    await _bluetoothClassicPlugin.initPermissions();
-    await _bluetoothClassicPlugin
-        .connect(deviceAddress, defaultUuid)
-        .then((bool result) {
+    await BT_DEV.initPermissions();
+    await BT_DEV.connect(deviceAddress, defaultUuid).then((bool result) {
       print('connection result in plant container: $result');
       setState(() {
         connectionUp = result;
@@ -109,7 +101,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (widget.connectionStatus) {
+        if (widget.connectionStatus || (connectionUp ?? false)) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
@@ -131,11 +123,13 @@ class _PlantContainerState extends State<PlantContainer> {
               ),
               DialogButton(
                 onPressed: () async {
-                  Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
-                  _bluetoothClassicPlugin.write("water $widget.waterAmount");
+                  print('send water');
+                  sendWater("$widget.waterAmount");
+                  // await BT_DEV.write("water $widget.waterAmount");
                   popUp.dismiss();
+                  Navigator.pop(context);
                 },
                 color: Colors.green,
                 child: const Text(
@@ -158,8 +152,8 @@ class _PlantContainerState extends State<PlantContainer> {
             desc: "Please make sure the device is connected before watering.",
             buttons: [
               DialogButton(
-                onPressed: () {
-                  initConnection();
+                onPressed: () async {
+                  await initConnection();
                   Navigator.pop(context);
                 },
                 color: Colors.red,

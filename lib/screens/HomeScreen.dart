@@ -26,12 +26,12 @@ class _HomeState extends State<HomeScreen> {
   Future<List<Plant>?>? plants;
 
   // BT BLOCK
-  final _bluetoothClassicPlugin = BluetoothClassic();
+  // final BT_DEV = BluetoothClassic();
   List<Device> _devices = [];
   List<Device> _discoveredDevices = [];
   bool _scanning = false;
   String _platformVersion = 'Unknown';
-  int _deviceStatus = Device.disconnected;
+  int DEVICE_STATUS = Device.disconnected;
   bool? _connectionStatus = false;
   Uint8List _data = Uint8List(0);
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
@@ -50,27 +50,21 @@ class _HomeState extends State<HomeScreen> {
       });
     });
     // BT init
-    _bluetoothClassicPlugin.initPermissions().then((value) => null);
-    initPlatformState();
-    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-      setState(() {
-        _deviceStatus = event;
+    BT_DEV.initPermissions().then((value) => null);
+    // initPlatformState();
+    if (!IS_LISTENED_TO) {
+      BT_DEV.onDeviceStatusChanged().listen((event) {
+        setState(() {
+          DEVICE_STATUS = event;
+        });
       });
-    });
-    _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
-      setState(() {
-        _data = Uint8List.fromList([..._data, ...event]);
-      });
-    });
-    // _bluetoothClassicPlugin.connect(deviceAddress, defaultUuid).then((result) {
-    //   print('ikonewka: ${result ? "connected" : "not connected"}');
+      IS_LISTENED_TO = true;
+    } else {}
+    // BT_DEV.onDeviceDataReceived().listen((event) {
     //   setState(() {
-    //     _connectionStatus = result;
-    //     _discoveredDevices = [];
-    //     _devices = [];
+    //     _data = Uint8List.fromList([..._data, ...event]);
     //   });
     // });
-    // BT init
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -79,8 +73,8 @@ class _HomeState extends State<HomeScreen> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _bluetoothClassicPlugin.getPlatformVersion() ??
-          'Unknown platform version';
+      platformVersion =
+          await BT_DEV.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -96,7 +90,7 @@ class _HomeState extends State<HomeScreen> {
   }
 
   Future<void> _getDevices() async {
-    var res = await _bluetoothClassicPlugin.getPairedDevices();
+    var res = await BT_DEV.getPairedDevices();
     setState(() {
       _devices = res;
     });
@@ -104,13 +98,13 @@ class _HomeState extends State<HomeScreen> {
 
   Future<void> _scan() async {
     if (_scanning) {
-      await _bluetoothClassicPlugin.stopScan();
+      await BT_DEV.stopScan();
       setState(() {
         _scanning = false;
       });
     } else {
-      await _bluetoothClassicPlugin.startScan();
-      _bluetoothClassicPlugin.onDeviceDiscovered().listen(
+      await BT_DEV.startScan();
+      BT_DEV.onDeviceDiscovered().listen(
         (event) {
           setState(() {
             _discoveredDevices = [..._discoveredDevices, event];
@@ -131,9 +125,9 @@ class _HomeState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Color? color;
-    if (0 == _deviceStatus) {
+    if (0 == DEVICE_STATUS) {
       color = Colors.red;
-    } else if (_deviceStatus == 1) {
+    } else if (DEVICE_STATUS == 1) {
       color = Colors.orange;
     } else {
       color = Colors.greenAccent;
@@ -156,7 +150,7 @@ class _HomeState extends State<HomeScreen> {
                   backgroundColor: Colors.red,
                   disabledBackgroundColor: color),
               child: Text(
-                "Device status: $_deviceStatus",
+                "Device status: $DEVICE_STATUS",
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(color: Colors.white, fontSize: 30)),
               )),

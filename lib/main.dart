@@ -1,3 +1,5 @@
+import 'package:bluetooth_classic/bluetooth_classic.dart';
+import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/App.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -8,6 +10,9 @@ void main() {
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final storage = new FlutterSecureStorage();
+final BT_DEV = BluetoothClassic();
+bool IS_LISTENED_TO = false;
+int DEVICE_STATUS = Device.disconnected;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

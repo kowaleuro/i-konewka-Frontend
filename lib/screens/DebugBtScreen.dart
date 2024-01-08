@@ -4,9 +4,17 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:bluetooth_classic/bluetooth_classic.dart';
+import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+void sendWater(String water) async {
+  final String deviceAddress = 'B4:E6:2D:86:FC:4F';
+  final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
+  await BT_DEV.connect(deviceAddress, defaultUuid);
+  BT_DEV.write('water $water');
+}
 
 class DebugBtScreen extends StatefulWidget {
   const DebugBtScreen({super.key});
@@ -20,7 +28,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   String _platformVersion = 'Unknown';
-  final _bluetoothClassicPlugin = BluetoothClassic();
+  // final BT_DEV = BluetoothClassic();
   List<Device> _devices = [];
   List<Device> _discoveredDevices = [];
   bool _scanning = false;
@@ -34,18 +42,20 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     super.initState();
     initPlatformState();
     initPermissionsApi34();
-    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-      print('device state changed: $_deviceStatus -> $event');
-      setState(() {
-        _deviceStatus = event;
+    if (!IS_LISTENED_TO) {
+      BT_DEV.onDeviceStatusChanged().listen((event) {
+        setState(() {
+          DEVICE_STATUS = event;
+        });
       });
-    });
-    _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
-      print('data received: $event');
-      setState(() {
-        _data = Uint8List.fromList([..._data, ...event]);
-      });
-    });
+      IS_LISTENED_TO = true;
+    }
+    // BT_DEV.onDeviceDataReceived().listen((event) {
+    //   print('data received: $event');
+    //   setState(() {
+    //     _data = Uint8List.fromList([..._data, ...event]);
+    //   });
+    // });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -54,8 +64,8 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _bluetoothClassicPlugin.getPlatformVersion() ??
-          'Unknown platform version';
+      platformVersion =
+          await BT_DEV.getPlatformVersion() ?? 'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -85,7 +95,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   }
 
   Future<void> _getDevices() async {
-    var res = await _bluetoothClassicPlugin.getPairedDevices();
+    var res = await BT_DEV.getPairedDevices();
     setState(() {
       _devices = res;
     });
@@ -93,13 +103,13 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
 
   Future<void> _scan() async {
     if (_scanning) {
-      await _bluetoothClassicPlugin.stopScan();
+      await BT_DEV.stopScan();
       setState(() {
         _scanning = false;
       });
     } else {
-      await _bluetoothClassicPlugin.startScan();
-      _bluetoothClassicPlugin.onDeviceDiscovered().listen(
+      await BT_DEV.startScan();
+      BT_DEV.onDeviceDiscovered().listen(
         (event) {
           print('event: $event');
           setState(() {
@@ -137,7 +147,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                   child: const Text("Check Permissions"),
                   onPressed: () async {
-                    await _bluetoothClassicPlugin.initPermissions();
+                    await BT_DEV.initPermissions();
                   }),
             ),
             ListTile(
@@ -151,7 +161,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
-                        await _bluetoothClassicPlugin.disconnect();
+                        await BT_DEV.disconnect();
                       }
                     : null,
                 child: const Text("disconnect"),
@@ -161,10 +171,8 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
-                        _bluetoothClassicPlugin.write("connect ");
-                        _bluetoothClassicPlugin
-                            .onDeviceDataReceived()
-                            .listen((event) {
+                        BT_DEV.write("connect ");
+                        BT_DEV.onDeviceDataReceived().listen((event) {
                           setState(() {
                             print(
                                 'data received: ${String.fromCharCodes(event)}');
@@ -182,7 +190,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                 onPressed: _deviceStatus == Device.connected
                     ? () async {
-                        await _bluetoothClassicPlugin.write("water 123");
+                        await BT_DEV.write("water 123");
                       }
                     : null,
                 child: const Text("send 'water 123'"),
@@ -192,7 +200,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
               trailing: ElevatedButton(
                 onPressed: _deviceStatus != Device.connected
                     ? () async {
-                        await _bluetoothClassicPlugin
+                        await BT_DEV
                             .connect(deviceAddress, defaultUuid)
                             .then((result) {
                           print(
@@ -217,8 +225,8 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
                 ListTile(
                     trailing: ElevatedButton(
                         onPressed: () async {
-                          var _status = await _bluetoothClassicPlugin.connect(
-                              device.address, defaultUuid);
+                          var _status =
+                              await BT_DEV.connect(device.address, defaultUuid);
                           setState(() {
                             _discoveredDevices = [];
                             _devices = [];
