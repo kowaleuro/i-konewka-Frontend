@@ -27,7 +27,6 @@ class _HomeState extends State<HomeScreen> {
 
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  // BT BLOCK
 
   @override
   void initState() {

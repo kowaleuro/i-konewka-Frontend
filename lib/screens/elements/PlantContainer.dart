@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/screens/DebugBtScreen.dart';
@@ -44,6 +45,7 @@ class _PlantContainerState extends State<PlantContainer> {
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   bool _waterInProgress = false;
   bool _connectionInProgress = false;
+  final BT_DEV = BluetoothClassic();
 
   @override
   void initState() {
@@ -169,7 +171,7 @@ class _PlantContainerState extends State<PlantContainer> {
     _waterInProgress = true;
     var popUp = CustomLoadingPopUp(context: context);
     popUp.show();
-    var result = await sendWater("$widget.waterAmount");
+    var result = await sendWater("$widget.waterAmount", BT_DEV);
     var errorPopUp;
     switch (result) {
       case 0:

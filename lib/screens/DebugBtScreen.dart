@@ -1,3 +1,4 @@
+import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -8,7 +9,7 @@ import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-Future<int> sendWater(String water) async {
+Future<int> sendWater(String water, BluetoothClassic BT_DEV) async {
   try {
     await BT_DEV.connect(
         "B4:E6:2D:86:FC:4F", "00001101-0000-1000-8000-00805f9b34fb");
@@ -42,6 +43,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   bool _scanning = false;
   Uint8List _data = Uint8List(0);
   bool? _bluetoothPermissions;
+  final BT_DEV = BluetoothClassic();
 
   @override
   void initState() {
