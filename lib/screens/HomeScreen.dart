@@ -25,9 +25,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeState extends State<HomeScreen> {
   Future<List<Plant>?>? plants;
 
-  int DEVICE_STATUS = Device.disconnected;
-  bool? _connectionStatus = false;
-  Uint8List _data = Uint8List(0);
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   // BT BLOCK
