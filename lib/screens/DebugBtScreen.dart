@@ -34,13 +34,13 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     super.initState();
     initPlatformState();
     initPermissionsApi34();
-    if (!IS_LISTENED_TO) {
-      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-        setState(() {
-          _deviceStatus = event;
-        });
-      });
-    }
+    // if (!IS_LISTENED_TO) {
+    //   _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+    //     setState(() {
+    //       _deviceStatus = event;
+    //     });
+    //   });
+    // }
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
       print('data received: $event');
       setState(() {
@@ -178,7 +178,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: _deviceStatus == Device.connected
+                onPressed: Device.connected == Device.connected
                     ? () async {
                         await _bluetoothClassicPlugin.write("water 123");
                       }

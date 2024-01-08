@@ -43,20 +43,18 @@ class _PlantContainerState extends State<PlantContainer> {
   bool? connectionUp = true;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  int _deviceStatus = Device.disconnected;
+  // int _deviceStatus = Device.disconnected;
 
   @override
   void initState() {
     super.initState();
     initConnection();
-    if (!IS_LISTENED_TO) {
-      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-        print('device state changed: $_deviceStatus -> $event');
-        setState(() {
-          _deviceStatus = event;
-        });
-      });
-    }
+    // _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+    //   print('device state changed: $_deviceStatus -> $event');
+    //   setState(() {
+    //     _deviceStatus = event;
+    //   });
+    // });
   }
 
   Future<void> initConnection() async {
@@ -109,7 +107,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (_deviceStatus == 2 || connectionUp!) {
+        if (connectionUp!) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
@@ -134,7 +132,7 @@ class _PlantContainerState extends State<PlantContainer> {
                   Navigator.pop(context);
                   var popUp = CustomLoadingPopUp(context: context);
                   popUp.show();
-                  _bluetoothClassicPlugin.write("water $widget.waterAmount");
+                  _bluetoothClassicPlugin.write("water ${widget.waterAmount}");
                   popUp.dismiss();
                 },
                 color: Colors.green,

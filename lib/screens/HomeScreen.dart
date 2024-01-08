@@ -29,6 +29,7 @@ class _HomeState extends State<HomeScreen> {
   final _bluetoothClassicPlugin = BluetoothClassic();
   List<Device> _devices = [];
   List<Device> _discoveredDevices = [];
+  String _platformVersion = '';
   bool _scanning = false;
   int _deviceStatus = Device.disconnected;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
@@ -48,13 +49,11 @@ class _HomeState extends State<HomeScreen> {
     });
     // BT init
     _bluetoothClassicPlugin.initPermissions().then((value) => null);
-    if (!IS_LISTENED_TO) {
-      _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
-        setState(() {
-          _deviceStatus = event;
-        });
+    _bluetoothClassicPlugin.onDeviceStatusChanged().listen((event) {
+      setState(() {
+        _deviceStatus = event;
       });
-    }
+    });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

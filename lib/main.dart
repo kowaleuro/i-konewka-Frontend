@@ -8,7 +8,7 @@ void main() {
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 final storage = new FlutterSecureStorage();
-bool IS_LISTENED_TO = false;
+// bool IS_LISTENED_TO = false;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
