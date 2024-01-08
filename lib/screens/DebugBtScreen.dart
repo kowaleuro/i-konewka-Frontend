@@ -3,17 +3,26 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:i_konewka_app/main.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-void sendWater(String water) async {
-  final String deviceAddress = 'B4:E6:2D:86:FC:4F';
-  final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  await BT_DEV.connect(deviceAddress, defaultUuid);
-  BT_DEV.write('water $water');
+Future<int> sendWater(String water) async {
+  try {
+    await BT_DEV.connect(
+        "B4:E6:2D:86:FC:4F", "00001101-0000-1000-8000-00805f9b34fb");
+  } on PlatformException {
+    print('essa');
+    return 1;
+  }
+  try {
+    await BT_DEV.write('water $water');
+  } on PlatformException {
+    print('bracie');
+    return 2;
+  }
+  return 0;
 }
 
 class DebugBtScreen extends StatefulWidget {
@@ -28,12 +37,9 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   String _platformVersion = 'Unknown';
-  // final BT_DEV = BluetoothClassic();
   List<Device> _devices = [];
   List<Device> _discoveredDevices = [];
   bool _scanning = false;
-  int _deviceStatus = Device.disconnected;
-  String? _ikonewkaConnectionConfirm;
   Uint8List _data = Uint8List(0);
   bool? _bluetoothPermissions;
 
@@ -50,12 +56,6 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
       });
       IS_LISTENED_TO = true;
     }
-    // BT_DEV.onDeviceDataReceived().listen((event) {
-    //   print('data received: $event');
-    //   setState(() {
-    //     _data = Uint8List.fromList([..._data, ...event]);
-    //   });
-    // });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -125,7 +125,6 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
 
   @override
   void dispose() {
-    print('dispose');
     super.dispose();
   }
 
@@ -141,7 +140,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
           children: <Widget>[
             ListTile(
               title: const Text('Device status'),
-              subtitle: Text("Device status is $_deviceStatus"),
+              subtitle: Text("Device status is $DEVICE_STATUS"),
             ),
             ListTile(
               trailing: ElevatedButton(
@@ -159,7 +158,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: _deviceStatus == Device.connected
+                onPressed: DEVICE_STATUS == Device.connected
                     ? () async {
                         await BT_DEV.disconnect();
                       }
@@ -169,18 +168,9 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: _deviceStatus == Device.connected
+                onPressed: DEVICE_STATUS == Device.connected
                     ? () async {
                         BT_DEV.write("connect ");
-                        BT_DEV.onDeviceDataReceived().listen((event) {
-                          setState(() {
-                            print(
-                                'data received: ${String.fromCharCodes(event)}');
-                            _ikonewkaConnectionConfirm =
-                                String.fromCharCodes(event);
-                            _data = Uint8List.fromList([..._data, ...event]);
-                          });
-                        });
                       }
                     : null,
                 child: const Text("send 'connect '"),
@@ -188,7 +178,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: _deviceStatus == Device.connected
+                onPressed: DEVICE_STATUS == Device.connected
                     ? () async {
                         await BT_DEV.write("water 123");
                       }
@@ -198,7 +188,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: _deviceStatus != Device.connected
+                onPressed: DEVICE_STATUS != Device.connected
                     ? () async {
                         await BT_DEV
                             .connect(deviceAddress, defaultUuid)

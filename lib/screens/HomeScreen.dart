@@ -25,12 +25,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeState extends State<HomeScreen> {
   Future<List<Plant>?>? plants;
 
-  // BT BLOCK
-  // final BT_DEV = BluetoothClassic();
-  List<Device> _devices = [];
-  List<Device> _discoveredDevices = [];
-  bool _scanning = false;
-  String _platformVersion = 'Unknown';
   int DEVICE_STATUS = Device.disconnected;
   bool? _connectionStatus = false;
   Uint8List _data = Uint8List(0);
@@ -49,9 +43,9 @@ class _HomeState extends State<HomeScreen> {
         plants = plantsData;
       });
     });
+
     // BT init
-    BT_DEV.initPermissions().then((value) => null);
-    // initPlatformState();
+    BT_DEV.initPermissions();
     if (!IS_LISTENED_TO) {
       BT_DEV.onDeviceStatusChanged().listen((event) {
         setState(() {
@@ -59,61 +53,6 @@ class _HomeState extends State<HomeScreen> {
         });
       });
       IS_LISTENED_TO = true;
-    } else {}
-    // BT_DEV.onDeviceDataReceived().listen((event) {
-    //   setState(() {
-    //     _data = Uint8List.fromList([..._data, ...event]);
-    //   });
-    // });
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await BT_DEV.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
-  }
-
-  Future<void> _getDevices() async {
-    var res = await BT_DEV.getPairedDevices();
-    setState(() {
-      _devices = res;
-    });
-  }
-
-  Future<void> _scan() async {
-    if (_scanning) {
-      await BT_DEV.stopScan();
-      setState(() {
-        _scanning = false;
-      });
-    } else {
-      await BT_DEV.startScan();
-      BT_DEV.onDeviceDiscovered().listen(
-        (event) {
-          setState(() {
-            _discoveredDevices = [..._discoveredDevices, event];
-          });
-        },
-      );
-      setState(() {
-        _scanning = true;
-      });
     }
   }
 
@@ -165,16 +104,16 @@ class _HomeState extends State<HomeScreen> {
                           shrinkWrap: true,
                           reverse: false,
                           itemBuilder: (context, index) => PlantContainer(
-                              height: 100,
-                              width: 100,
-                              fontSize: 28,
-                              name: snapshot.data?[index].name,
-                              icon: Icons.sentiment_very_satisfied,
-                              image: snapshot.data![index].getImageWidget(),
-                              plantId: snapshot.data![index].fid,
-                              waterAmount:
-                                  snapshot.data![index].ml_per_watering,
-                              connectionStatus: _connectionStatus!),
+                                height: 100,
+                                width: 100,
+                                fontSize: 28,
+                                name: snapshot.data?[index].name,
+                                icon: Icons.sentiment_very_satisfied,
+                                image: snapshot.data![index].getImageWidget(),
+                                plantId: snapshot.data![index].fid,
+                                waterAmount:
+                                    snapshot.data![index].ml_per_watering,
+                              ),
                           itemCount: snapshot.data!.length,
                           separatorBuilder: (BuildContext context, int index) =>
                               const SizedBox(height: 0));

@@ -1,11 +1,10 @@
 import 'dart:typed_data';
-
-import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
 import 'package:i_konewka_app/screens/DebugBtScreen.dart';
 import 'package:i_konewka_app/screens/EditPlantScreen.dart';
 import 'package:i_konewka_app/screens/elements/AlertStyle.dart';
+import 'package:i_konewka_app/screens/elements/CustomErrorPopUp.dart';
 import 'package:i_konewka_app/screens/elements/CustomLoadingPopUp.dart';
 import 'package:i_konewka_app/screens/elements/PlantImage.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -22,8 +21,7 @@ class PlantContainer extends StatefulWidget {
       required this.icon,
       required this.image,
       required this.plantId,
-      required this.waterAmount,
-      required this.connectionStatus});
+      required this.waterAmount});
 
   final double height;
   final double width;
@@ -35,28 +33,27 @@ class PlantContainer extends StatefulWidget {
   final colorGreen = Colors.green;
   final int? plantId;
   final int waterAmount;
-  final bool connectionStatus;
 
   @override
   State<StatefulWidget> createState() => _PlantContainerState();
 }
 
 class _PlantContainerState extends State<PlantContainer> {
-  // final BT_DEV = BluetoothClassic();
   bool? connectionUp;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
-  // int _deviceStatus = Device.disconnected;
+  bool _waterInProgress = false;
+  bool _connectionInProgress = false;
 
   @override
   void initState() {
     super.initState();
+    // TODO: uncomment
+    if (DEVICE_STATUS != Device.connected) initConnection();
   }
 
   Future<void> initConnection() async {
-    await BT_DEV.initPermissions();
     await BT_DEV.connect(deviceAddress, defaultUuid).then((bool result) {
-      print('connection result in plant container: $result');
       setState(() {
         connectionUp = result;
       });
@@ -65,8 +62,6 @@ class _PlantContainerState extends State<PlantContainer> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return InkWell(
       child: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -101,7 +96,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (widget.connectionStatus || (connectionUp ?? false)) {
+        if (DEVICE_STATUS == Device.connected) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
@@ -122,15 +117,7 @@ class _PlantContainerState extends State<PlantContainer> {
                 ),
               ),
               DialogButton(
-                onPressed: () async {
-                  var popUp = CustomLoadingPopUp(context: context);
-                  popUp.show();
-                  print('send water');
-                  sendWater("$widget.waterAmount");
-                  // await BT_DEV.write("water $widget.waterAmount");
-                  popUp.dismiss();
-                  Navigator.pop(context);
-                },
+                onPressed: !_waterInProgress ? _sendWaterProcess : null,
                 color: Colors.green,
                 child: const Text(
                   "START",
@@ -143,7 +130,6 @@ class _PlantContainerState extends State<PlantContainer> {
             ],
           ).show();
         } else {
-          // Display alert for not connected
           Alert(
             type: AlertType.error,
             style: CustomAlertStyle.alertStyle,
@@ -152,10 +138,8 @@ class _PlantContainerState extends State<PlantContainer> {
             desc: "Please make sure the device is connected before watering.",
             buttons: [
               DialogButton(
-                onPressed: () async {
-                  await initConnection();
-                  Navigator.pop(context);
-                },
+                onPressed:
+                    !_connectionInProgress ? _initConnectionProcess : null,
                 color: Colors.red,
                 child: const Text(
                   "OK, redo connection",
@@ -179,5 +163,41 @@ class _PlantContainerState extends State<PlantContainer> {
                     )));
       },
     );
+  }
+
+  Future<void> _sendWaterProcess() async {
+    _waterInProgress = true;
+    var popUp = CustomLoadingPopUp(context: context);
+    popUp.show();
+    var result = await sendWater("$widget.waterAmount");
+    var errorPopUp;
+    switch (result) {
+      case 0:
+        break;
+      case 1:
+        errorPopUp = CustomErrorPopUp(context: context, reason: 'connecting');
+        break;
+      case 2:
+        errorPopUp = CustomErrorPopUp(context: context, reason: 'watering');
+        break;
+      default:
+        break;
+    }
+    popUp.dismiss();
+
+    if (!context.mounted) return;
+    Navigator.pop(context);
+    if (errorPopUp != null) {
+      errorPopUp.show();
+    }
+    _waterInProgress = false;
+  }
+
+  Future<void> _initConnectionProcess() async {
+    _connectionInProgress = true;
+    await initConnection();
+    if (!context.mounted) return;
+    Navigator.pop(context);
+    _connectionInProgress = false;
   }
 }
