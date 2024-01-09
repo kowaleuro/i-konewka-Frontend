@@ -65,6 +65,12 @@ class _PlantContainerState extends State<PlantContainer> {
   }
 
   @override
+  void dispose() {
+    BT_DEV.disconnect();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       child: Padding(

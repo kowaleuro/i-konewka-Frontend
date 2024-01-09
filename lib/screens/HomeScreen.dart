@@ -54,6 +54,12 @@ class _HomeState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    BT_DEV.disconnect();
+    super.dispose();
+  }
+
+  @override
   State<StatefulWidget> createState() {
     return _HomeState();
   }

@@ -128,6 +128,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
 
   @override
   void dispose() {
+    BT_DEV.disconnect();
     super.dispose();
   }
 
