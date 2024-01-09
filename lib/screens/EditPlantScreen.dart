@@ -71,6 +71,10 @@ class _EditPlantScreen extends State<EditPlantScreen>{
 
               _wateringDaysList = snapshot.data!.getWateringList();
 
+              _name = snapshot.data!.name;
+
+              _waterMl = snapshot.data!.ml_per_watering;
+
               return SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.only(top: size.height / 15),
@@ -117,7 +121,7 @@ class _EditPlantScreen extends State<EditPlantScreen>{
                               },
                               onChanged: (val) {
                                 _name = val;
-                                print(_name);
+                                print(" testsert $_name");
                               }),
                           CustomTextFormField(
                               initialValue: snapshot.data?.health,
