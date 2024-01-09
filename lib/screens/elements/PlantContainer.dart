@@ -48,12 +48,12 @@ class _PlantContainerState extends State<PlantContainer> {
   final BT_DEV = BluetoothClassic();
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
     // TODO: uncomment
     // global is not updated
     // if (DEVICE_STATUS != Device.connected) initConnection();
-    initConnection();
+    await initConnection();
   }
 
   Future<void> initConnection() async {
