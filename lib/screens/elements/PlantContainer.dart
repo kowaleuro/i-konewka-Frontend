@@ -53,7 +53,7 @@ class _PlantContainerState extends State<PlantContainer> {
     // TODO: uncomment
     // global is not updated
     // if (DEVICE_STATUS != Device.connected) initConnection();
-    // await initConnection();
+    initConnection();
   }
 
   Future<void> initConnection() async {
@@ -190,20 +190,25 @@ class _PlantContainerState extends State<PlantContainer> {
     _waterInProgress = true;
     var popUp = CustomLoadingPopUp(context: context);
     popUp.show();
-
-    var result = false;
-    await BT_DEV.connect(deviceAddress, defaultUuid).then((bool _result) {
-      BT_DEV.write('water ${widget.waterAmount}');
-      result = _result;
-    });
-    BT_DEV.disconnect();
-
+    var result = await sendWater("${widget.waterAmount}", BT_DEV);
+    var errorPopUp;
+    switch (result) {
+      case 0:
+        break;
+      case 1:
+        errorPopUp = CustomErrorPopUp(context: context, reason: 'connecting');
+        break;
+      case 2:
+        errorPopUp = CustomErrorPopUp(context: context, reason: 'watering');
+        break;
+      default:
+        break;
+    }
     popUp.dismiss();
 
     if (!context.mounted) return;
     Navigator.pop(context);
-    if (result == false) {
-      var errorPopUp = CustomErrorPopUp(context: context, reason: 'connecting');
+    if (errorPopUp != null) {
       errorPopUp.show();
     }
     _waterInProgress = false;
