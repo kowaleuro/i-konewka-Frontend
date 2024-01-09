@@ -150,9 +150,20 @@ class _PlantContainerState extends State<PlantContainer> {
               DialogButton(
                 onPressed:
                     !_connectionInProgress ? _initConnectionProcess : null,
-                color: !_connectionInProgress ? Colors.red : Colors.grey,
+                color: !_connectionInProgress ? Colors.green : Colors.grey,
                 child: const Text(
-                  "OK, redo connection",
+                  "Connect",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 20),
+                ),
+              ),
+              DialogButton(
+                onPressed: () => Navigator.pop(context),
+                color: Colors.red,
+                child: const Text(
+                  "Cancel",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
