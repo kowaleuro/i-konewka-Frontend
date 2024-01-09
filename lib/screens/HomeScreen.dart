@@ -27,6 +27,7 @@ class _HomeState extends State<HomeScreen> {
   final BT_DEV = BluetoothClassic();
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
+  int _DEVICE_STATUS = Device.disconnected;
 
   @override
   void initState() {
@@ -45,7 +46,7 @@ class _HomeState extends State<HomeScreen> {
     if (!IS_LISTENED_TO) {
       BT_DEV.onDeviceStatusChanged().listen((event) {
         setState(() {
-          DEVICE_STATUS = event;
+          _DEVICE_STATUS = event;
         });
       });
       IS_LISTENED_TO = true;
@@ -60,9 +61,9 @@ class _HomeState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Color? color;
-    if (0 == DEVICE_STATUS) {
+    if (0 == _DEVICE_STATUS) {
       color = Colors.red;
-    } else if (DEVICE_STATUS == 1) {
+    } else if (_DEVICE_STATUS == 1) {
       color = Colors.orange;
     } else {
       color = Colors.greenAccent;
@@ -85,7 +86,7 @@ class _HomeState extends State<HomeScreen> {
                   backgroundColor: Colors.red,
                   disabledBackgroundColor: color),
               child: Text(
-                "Device status: $DEVICE_STATUS",
+                "Device status: $_DEVICE_STATUS",
                 style: GoogleFonts.nunitoSans(
                     textStyle: TextStyle(color: Colors.white, fontSize: 30)),
               )),

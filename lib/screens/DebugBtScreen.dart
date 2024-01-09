@@ -44,6 +44,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
   Uint8List _data = Uint8List(0);
   bool? _bluetoothPermissions;
   final BT_DEV = BluetoothClassic();
+  int _DEVICE_STATUS = Device.disconnected;
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
     if (!IS_LISTENED_TO) {
       BT_DEV.onDeviceStatusChanged().listen((event) {
         setState(() {
-          DEVICE_STATUS = event;
+          _DEVICE_STATUS = event;
         });
       });
       IS_LISTENED_TO = true;
@@ -142,7 +143,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
           children: <Widget>[
             ListTile(
               title: const Text('Device status'),
-              subtitle: Text("Device status is $DEVICE_STATUS"),
+              subtitle: Text("Device status is $_DEVICE_STATUS"),
             ),
             ListTile(
               trailing: ElevatedButton(
@@ -160,7 +161,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: DEVICE_STATUS == Device.connected
+                onPressed: _DEVICE_STATUS == Device.connected
                     ? () async {
                         await BT_DEV.disconnect();
                       }
@@ -170,7 +171,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: DEVICE_STATUS == Device.connected
+                onPressed: _DEVICE_STATUS == Device.connected
                     ? () async {
                         BT_DEV.write("connect ");
                       }
@@ -180,7 +181,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: DEVICE_STATUS == Device.connected
+                onPressed: _DEVICE_STATUS == Device.connected
                     ? () async {
                         await BT_DEV.write("water 123");
                       }
@@ -190,7 +191,7 @@ class _DebugBtScreenState extends State<DebugBtScreen> {
             ),
             ListTile(
               trailing: ElevatedButton(
-                onPressed: DEVICE_STATUS != Device.connected
+                onPressed: _DEVICE_STATUS != Device.connected
                     ? () async {
                         await BT_DEV
                             .connect(deviceAddress, defaultUuid)
