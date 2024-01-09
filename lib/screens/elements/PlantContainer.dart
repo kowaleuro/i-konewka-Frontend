@@ -128,7 +128,7 @@ class _PlantContainerState extends State<PlantContainer> {
               ),
               DialogButton(
                 onPressed: !_waterInProgress ? _sendWaterProcess : null,
-                color: Colors.green,
+                color: !_waterInProgress ? Colors.green : Colors.grey,
                 child: const Text(
                   "START",
                   style: TextStyle(
@@ -150,7 +150,7 @@ class _PlantContainerState extends State<PlantContainer> {
               DialogButton(
                 onPressed:
                     !_connectionInProgress ? _initConnectionProcess : null,
-                color: Colors.red,
+                color: !_connectionInProgress ? Colors.red : Colors.grey,
                 child: const Text(
                   "OK, redo connection",
                   style: TextStyle(
