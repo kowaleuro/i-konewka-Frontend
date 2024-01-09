@@ -51,7 +51,9 @@ class _PlantContainerState extends State<PlantContainer> {
   void initState() {
     super.initState();
     // TODO: uncomment
-    if (DEVICE_STATUS != Device.connected) initConnection();
+    // global is not updated
+    // if (DEVICE_STATUS != Device.connected) initConnection();
+    initConnection();
   }
 
   Future<void> initConnection() async {
@@ -98,7 +100,7 @@ class _PlantContainerState extends State<PlantContainer> {
         ),
       ),
       onTap: () {
-        if (DEVICE_STATUS == Device.connected) {
+        if (connectionUp!) {
           Alert(
             type: AlertType.warning,
             style: CustomAlertStyle.alertStyle,
@@ -171,7 +173,7 @@ class _PlantContainerState extends State<PlantContainer> {
     _waterInProgress = true;
     var popUp = CustomLoadingPopUp(context: context);
     popUp.show();
-    var result = await sendWater("$widget.waterAmount", BT_DEV);
+    var result = await sendWater("${widget.waterAmount}", BT_DEV);
     var errorPopUp;
     switch (result) {
       case 0:
