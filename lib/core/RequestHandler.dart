@@ -113,7 +113,7 @@ class RequestHandler {
 
   Future<bool> addPhoto(int fid, String? encodedImage) async {
     try {
-      var postData = {'fid': fid, 'flower_image': encodedImage};
+      var postData = {'fid': fid, 'image': encodedImage};
       var response = await api.postAuth('/api/flower_photo', postData);
       return true;
     } catch (e) {
