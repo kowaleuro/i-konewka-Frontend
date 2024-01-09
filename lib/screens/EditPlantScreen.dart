@@ -46,17 +46,12 @@ class _EditPlantScreen extends State<EditPlantScreen>{
   void initState() {
     super.initState();
     final widgetsBinding = WidgetsBinding.instance;
-    widgetsBinding?.addPostFrameCallback((callback) async {
+    widgetsBinding?.addPostFrameCallback((callback) {
       RequestHandler requestHandler = RequestHandler();
       print('hej' + widget.plantId.toString());
       var plantData = requestHandler.getPlant(widget.plantId);
-      setState(() async {
+      setState(() {
         plantFuture = plantData;
-        Plant? plant = await plantFuture.then((value){
-          _wateringDaysList = value!.getWateringList();
-          _name = value!.name;
-          _waterMl = value!.ml_per_watering;
-        });
       });
     });
   }
@@ -73,6 +68,8 @@ class _EditPlantScreen extends State<EditPlantScreen>{
 
             if (snapshot.hasData &&
                 snapshot.connectionState == ConnectionState.done) {
+
+              _wateringDaysList = snapshot.data!.getWateringList();
 
               return SingleChildScrollView(
                 child: Padding(
