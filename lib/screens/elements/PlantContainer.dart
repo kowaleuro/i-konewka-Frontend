@@ -40,7 +40,7 @@ class PlantContainer extends StatefulWidget {
 }
 
 class _PlantContainerState extends State<PlantContainer> {
-  bool? connectionUp;
+  bool connectionUp = false;
   final String deviceAddress = 'B4:E6:2D:86:FC:4F';
   final String defaultUuid = "00001101-0000-1000-8000-00805f9b34fb";
   bool _waterInProgress = false;
@@ -48,12 +48,12 @@ class _PlantContainerState extends State<PlantContainer> {
   final BT_DEV = BluetoothClassic();
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
     // TODO: uncomment
     // global is not updated
     // if (DEVICE_STATUS != Device.connected) initConnection();
-    await initConnection();
+    // await initConnection();
   }
 
   Future<void> initConnection() async {
@@ -179,25 +179,20 @@ class _PlantContainerState extends State<PlantContainer> {
     _waterInProgress = true;
     var popUp = CustomLoadingPopUp(context: context);
     popUp.show();
-    var result = await sendWater("${widget.waterAmount}", BT_DEV);
-    var errorPopUp;
-    switch (result) {
-      case 0:
-        break;
-      case 1:
-        errorPopUp = CustomErrorPopUp(context: context, reason: 'connecting');
-        break;
-      case 2:
-        errorPopUp = CustomErrorPopUp(context: context, reason: 'watering');
-        break;
-      default:
-        break;
-    }
+
+    var result = false;
+    await BT_DEV.connect(deviceAddress, defaultUuid).then((bool _result) {
+      BT_DEV.write('water ${widget.waterAmount}');
+      result = _result;
+    });
+    BT_DEV.disconnect();
+
     popUp.dismiss();
 
     if (!context.mounted) return;
     Navigator.pop(context);
-    if (errorPopUp != null) {
+    if (result == false) {
+      var errorPopUp = CustomErrorPopUp(context: context, reason: 'connecting');
       errorPopUp.show();
     }
     _waterInProgress = false;
